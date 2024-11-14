@@ -1,14 +1,55 @@
-function connection(ws, req, user) {
-    // Обработчик для WebSocket соединений
-    console.log('User connected', user);
-    ws.on('message', (message) => {
-      console.log('Message received:', message);
-      // Логика обработки сообщений
-    });
-  
-    ws.on('close', () => {
-      console.log('User disconnected');
+const { Message } = require('../../db/models');
+const activeConnections = {};
+
+function connection(ws, request, user) {
+  ws.on('error', console.error);
+
+  activeConnections[user.id] = { ws, user };
+
+  function sendActiveUsers() {
+    Object.values(activeConnections).forEach((userConnection) => {
+      const action = {
+        type: 'chat/setUsers',
+        payload: Object.values(activeConnections).map((v) => v.user),
+      };
+      userConnection.ws.send(JSON.stringify(action));
     });
   }
-  
-  module.exports = connection;
+
+  ws.on('close', () => {
+    delete activeConnections[user.id];
+    sendActiveUsers();
+  });
+
+  sendActiveUsers();
+  Message.findAll().then((messages) => {
+    const action = {
+      type: 'chat/setMessages',
+      payload: messages,
+    };
+    ws.send(JSON.stringify(action));
+  });
+
+  ws.on('message', (data) => {
+    const action = JSON.parse(data);
+    const { type, payload } = action;
+    switch (type) {
+      case 'NEW_MESSAGE':
+        Message.create({ text: payload, userId: user.id }).then((newMess) => {
+          Object.values(activeConnections).forEach((userConnection) => {
+            const newAction = {
+              type: 'chat/addMessage',
+              payload: newMess,
+            };
+            userConnection.ws.send(JSON.stringify(newAction));
+          });
+        });
+        break;
+
+      default:
+        break;
+    }
+  })
+}
+
+module.exports = connection;

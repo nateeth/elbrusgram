@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -9,23 +9,26 @@ import {
   ListItemText,
   Paper,
 } from '@mui/material';
+import { useAppSelector } from '../../store/hook';
 
-const users = [
-  { id: 1, name: 'User1' },
-  { id: 2, name: 'User2' },
-  { id: 3, name: 'User3' },
-  { id: 4, name: 'User4' },
-];
+// const users = [
+//   { id: 1, name: 'User1' },
+//   { id: 2, name: 'User2' },
+//   { id: 3, name: 'User3' },
+//   { id: 4, name: 'User4' },
+// ];
 
-const messages = [
-  { id: 1, userId: 1, text: 'Привет всем!' },
-  { id: 2, userId: 2, text: 'Привет, как дела?' },
-  { id: 3, userId: 3, text: 'Здравствуй, как ты?' },
-  { id: 4, userId: 4, text: 'Привет, чем все занимаются?' },
-];
+// const messages = [
+//   { id: 1, userId: 1, text: 'Привет всем!' },
+//   { id: 2, userId: 2, text: 'Привет, как дела?' },
+//   { id: 3, userId: 3, text: 'Здравствуй, как ты?' },
+//   { id: 4, userId: 4, text: 'Привет, чем все занимаются?' },
+// ];
 
 const ChatPage = () => {
   const [newMessage, setNewMessage] = useState('');
+  const users = useAppSelector((store) => store.chat.users);
+  const messages = useAppSelector((store) => store.chat.messages);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
