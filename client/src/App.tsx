@@ -3,6 +3,7 @@ import Layout from './Layout';
 import HomePage from './components/pages/HomePage';
 import LoginPage from './components/pages/LoginPage';
 import { createTheme, ThemeProvider } from '@mui/material';
+import ChatPage from './components/pages/ChatPage';
 
 const theme = createTheme({
   typography: {
@@ -29,6 +30,10 @@ function App(): JSX.Element {
         {
           path: '/',
           element: <HomePage />,
+        },
+        {
+          path: '/chat',
+          element: <ChatPage />,
         },
         {
           path: '/login',

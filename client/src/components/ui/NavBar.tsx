@@ -35,6 +35,10 @@ export default function NavBar(): JSX.Element {
               />
             </Link>
           </Typography>
+          {/* ПОКА В ЦЕЛЯХ ТЕСТИРОВАНИЯ КНОПКА ДОСТУПНА ВСЕМ */}
+          <Button color="primary" onClick={() => (window.location.href = '/chat')}>
+            Чат
+          </Button>
           {isAuthenticated ? (
             <div style={{ color: 'blue' }}>
               <div>Добро пожаловать, {username}</div>
