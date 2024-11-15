@@ -42,7 +42,7 @@ export default function NavBar(): JSX.Element {
           {isAuthenticated ? (
             <div style={{ color: 'blue' }}>
               <div>Добро пожаловать, {username}</div>
-              <Button color="primary" onClick={() => (window.location.href = '/main')}>
+              <Button color="primary" onClick={() => (window.location.href = '/')}>
                 На главную
               </Button>
 

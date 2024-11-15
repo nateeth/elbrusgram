@@ -17,6 +17,8 @@ const ChatPage = () => {
   const messages = useAppSelector((store) => store.chat.messages);
   const { sendData } = useContext(ChatwsContext);
 
+  console.log(messages)
+
 
 
 
@@ -61,7 +63,7 @@ const ChatPage = () => {
             {messages.map((message) => (
               <Box key={message.id} sx={{ marginBottom: 1 }}>
                 <Typography variant="body2" fontWeight="bold">
-                  {users.find((user) => user.id === message.authorid)?.name}:
+                  {message.authorName}:
                 </Typography>
                 <Typography variant="body1" sx={{ marginLeft: 2 }}>
                   {message.text}
