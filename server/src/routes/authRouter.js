@@ -7,11 +7,11 @@ const cookieConfig = require('../configs/cookieConfig');
 
 authRouter
     .post('/register',async (req, res) => {
-        const {regemail, regname, regpassword } = req.body;
+        const {regemail, regname, regpassword, regnick } = req.body;
         const hashpass = await bcrypt.hash(regpassword, 10);
         const [newUser, created] = await User.findOrCreate({
             where: {email: regemail},
-            defaults: {name: regname, hashpass}
+            defaults: {name: regname, hashpass, nick: regnick}
         });
         if(!created){return res.status(400).json({text: 'Почта уже существует'})}
         
