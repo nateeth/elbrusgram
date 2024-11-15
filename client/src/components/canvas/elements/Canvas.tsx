@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
-import './CanvasPage.scss';
+import './Canvas.scss';
 import {observer} from "mobx-react-lite";
-import canvasState from "../store/canvasState";
+import canvasState from '../store/canvasState';
 import toolState from '../store/toolState';
 import Brush from '../tools/Brush';
 import Rect from '../tools/Rect';
@@ -22,7 +22,7 @@ const CanvasPage = observer( () => {
   },[])
 
   const mouseDownHandler = () => {
-    canvasState.pushToUndo(canvasRef?.current.toDataURL());
+    canvasState.pushToUndo(canvasRef.current.toDataURL());
   }
 
   return (

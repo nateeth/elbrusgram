@@ -4,7 +4,7 @@ import HomePage from './components/pages/HomePage';
 import LoginPage from './components/pages/LoginPage';
 import { createTheme, ThemeProvider } from '@mui/material';
 import ChatPage from './components/pages/ChatPage';
-import PaintPage from './components/canvas/pages/PaintPage';
+import PaintPage from './components/pages/PaintPage';
 
 const theme = createTheme({
   typography: {

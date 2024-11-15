@@ -14,12 +14,10 @@ import ChatwsContext from '../../store/chatws/chatwsContext';
 
 const ChatPage = () => {
   const users = useAppSelector((store) => store.chat.users);
+  const isAuthenticated = useAppSelector((state) => state.auth.status === 'succeeded');
   const messages = useAppSelector((store) => store.chat.messages);
   const { sendData } = useContext(ChatwsContext);
-
-
-
-
+  
   return (
     <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>
       <Box

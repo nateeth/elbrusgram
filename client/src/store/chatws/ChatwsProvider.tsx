@@ -2,9 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import ChatwsContext from './chatwsContext';
 import { useAppDispatch, useAppSelector } from '../hook';
 
-
-
-
 type ChatwsProviderProps = {
   children: JSX.Element;
 };
