@@ -1,5 +1,3 @@
-
-
 const validateCookie = require('../middleware/validateCookie');
 const wss = require('./wss');
 

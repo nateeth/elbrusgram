@@ -1,11 +1,11 @@
 import './ToolBar.scss';
-import './CanvasPage.scss';
+import './Canvas.scss';
 import { Input } from '@mui/material';
 import toolState from '../store/toolState';
 
 function SettingsBar(): JSX.Element {
   return (
-    <div className="setting-bar" style={{ top: 120 }}>
+    <div className="setting-bar" style={{ top: 140 }}>
       <label htmlFor="line-width">Толщина линии</label>
       <Input
         onChange={(e) => toolState.setLineWidth(e.target.value)}
@@ -13,8 +13,6 @@ function SettingsBar(): JSX.Element {
         id="line-width"
         type="number"
         defaultValue={1}
-        min={1}
-        max={50}
       />
       <label htmlFor="stroke-color">Цвет обводки</label>
       <Input

@@ -28,7 +28,9 @@ import { useAppSelector } from '../../store/hook';
 const ChatPage = () => {
   const [newMessage, setNewMessage] = useState('');
   const users = useAppSelector((store) => store.chat.users);
+  const isAuthenticated = useAppSelector((state) => state.auth.status === 'succeeded');
   const messages = useAppSelector((store) => store.chat.messages);
+  console.log(isAuthenticated);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -59,7 +61,7 @@ const ChatPage = () => {
         </Typography>
         <List sx={{ padding: 0 }}>
           {users.map((user) => (
-            <ListItem key={user.id} button>
+            <ListItem key={user.id} >
               <ListItemText primary={user.name} />
             </ListItem>
           ))}

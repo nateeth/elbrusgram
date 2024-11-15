@@ -1,5 +1,5 @@
 import './ToolBar.scss';
-import './CanvasPage.scss';
+import './Canvas.scss';
 import { Button, Input } from '@mui/material';
 import canvasState from '../store/canvasState';
 import toolState from '../store/toolState';
@@ -11,14 +11,14 @@ import Line from '../tools/Line';
 
 
 function ToolBar(): JSX.Element {
-  const changeColor = (e) => {
+  const changeColor = (e: Event) => {
     toolState.setStrokeColor(e.target.value);
     toolState.setFillColor(e.target.value);
 
   }
 
   return (
-    <div className="toolbar" style={{ top: 60 }}>
+    <div className="toolbar" style={{ top: 100 }}>
       <Button
         className="toolbar-button brush"
         onClick={() => toolState.setTool(new Brush(canvasState.canvas))}
