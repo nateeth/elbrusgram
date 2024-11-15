@@ -28,7 +28,8 @@ module.exports = {
           model: 'Groups',
           key: 'id'
         },
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
+        defaultValue: 1
       },
       createdAt: {
         allowNull: false,
