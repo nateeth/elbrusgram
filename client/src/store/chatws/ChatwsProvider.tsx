@@ -10,13 +10,13 @@ type ChatwsProviderProps = {
 };
 
 export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.Element {
-  const {role} = useAppSelector((state) => state.auth);
+  const role = useAppSelector((state) => state.auth.role);
   const socketRef = useRef<WebSocket | null>(null);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     function socketInit(): void {
-      if (role === 'guest') {
+      // if (role === 'guest') {
         const socket = new WebSocket('http://localhost:3000');
         socket.onopen = () => {
           console.log('Соединение открыто');
@@ -32,7 +32,7 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
           dispatch(action);
         };
         socketRef.current = socket;
-      }
+      // }
     }
     socketInit();
   }, [role, dispatch]);
