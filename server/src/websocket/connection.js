@@ -1,15 +1,12 @@
-
-const { Message, User, Group, UserGroup, Reaction } = require('../../db/models');
+const { Message, User } = require('../../db/models');
 
 const activeConnections = {};
 
 function connection(ws, request, user) {
   ws.on('error', console.error);
 
-  
   activeConnections[user.id] = { ws, user };
 
-  
   const sendActiveUsers = () => {
     const activeUsers = Object.values(activeConnections).map((v) => v.user);
     Object.values(activeConnections).forEach((userConnection) => {
@@ -21,16 +18,13 @@ function connection(ws, request, user) {
     });
   };
 
-  
   ws.on('close', () => {
     delete activeConnections[user.id];
-    sendActiveUsers(); 
+    sendActiveUsers();
   });
 
-  
   sendActiveUsers();
 
-  
   Message.findAll().then((messages) => {
     const action = {
       type: 'chat/setMessages',
@@ -39,7 +33,6 @@ function connection(ws, request, user) {
     ws.send(JSON.stringify(action));
   });
 
-  
   ws.on('message', async (data) => {
     try {
       const action = JSON.parse(data);
@@ -47,21 +40,18 @@ function connection(ws, request, user) {
 
       switch (type) {
         case 'NEW_MESSAGE': {
-          
           const currentUser = await User.findByPk(user.id);
           if (!currentUser) {
             console.error('User not found');
             return;
           }
 
-          
           const newMessage = await Message.create({
             text: payload,
             authorid: user.id,
-            authorName: currentUser.name, 
+            authorName: currentUser.name,
           });
 
-          
           Object.values(activeConnections).forEach((userConnection) => {
             const newAction = {
               type: 'chat/addMessage',

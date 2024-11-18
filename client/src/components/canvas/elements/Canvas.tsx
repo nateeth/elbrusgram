@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo, useRef } from 'react';
 import './Canvas.scss';
 import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react-lite';
 import canvasState from '../store/canvasState';
 import toolState from '../store/toolState';
 import Brush from '../tools/Brush';
@@ -55,6 +56,7 @@ const CanvasPage = observer(() => {
         />
       </div>
   );
+});
 });
 
 export default CanvasPage;

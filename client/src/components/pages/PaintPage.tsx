@@ -1,18 +1,9 @@
 import CanvasPage from '../canvas/elements/Canvas';
 import '../canvas/elements/Canvas.scss';
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-} from '@mui/material';
+import { Box, Typography, List, ListItemText, Paper, ListItemButton } from '@mui/material';
 import SettingsBarPage from '../canvas/elements/SettingsBar';
 import ToolBarPage from '../canvas/elements/ToolBar';
-import { useAppSelector } from '../../store/hook';
+import { useAppSelector } from '../providers/hooks';
 
 function PaintPage(): JSX.Element {
   const users = useAppSelector((store) => store.chat.users);
@@ -35,9 +26,9 @@ function PaintPage(): JSX.Element {
         </Typography>
         <List sx={{ padding: 0 }}>
           {users.map((user) => (
-            <ListItem key={user.id} button>
+            <ListItemButton key={user.id} component="li">
               <ListItemText primary={user.name} />
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
       </Box>

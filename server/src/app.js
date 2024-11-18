@@ -16,8 +16,8 @@ app.use(cookieParser());
 app.use(express.static('public'));
 app.use(express.json());
 
-app.use('/api/tokens', refreshRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/tokens', tokensRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/api/groups', groupsRouter);
