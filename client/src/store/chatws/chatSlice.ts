@@ -9,6 +9,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initialState = {
   users: [],
   messages: [],
+  allUsers: [],
 };
 
 export const chatSlice = createSlice({

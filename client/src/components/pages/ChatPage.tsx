@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -9,14 +9,23 @@ import {
   ListItemText,
   Paper,
 } from '@mui/material';
-import { useAppSelector } from '../../store/hook';
+import { useAppDispatch, useAppSelector } from '../../store/hook';
 import ChatwsContext from '../../store/chatws/chatwsContext';
+import { getAllUsers } from '../../store/users/usersThunk';
 
 const ChatPage = () => {
-  const users = useAppSelector((store) => store.chat.users);
+  const users = useAppSelector((store) => store.users.users);
   const isAuthenticated = useAppSelector((state) => state.auth.status === 'succeeded');
   const messages = useAppSelector((store) => store.chat.messages);
   const { sendData } = useContext(ChatwsContext);
+
+  const dispatch = useAppDispatch();  
+  useEffect(() => {
+    void dispatch(getAllUsers())
+  }, [dispatch])
+
+
+  console.log(users)
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>
@@ -31,9 +40,15 @@ const ChatPage = () => {
           flexDirection: 'column',
         }}
       >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between'}}>
+
         <Typography variant="h6" gutterBottom>
           Пользователи
         </Typography>
+        <Button>
+          чат
+        </Button>
+        </Box>
         <List sx={{ padding: 0 }}>
           {users.map((user) => (
             <ListItem key={user.id}>

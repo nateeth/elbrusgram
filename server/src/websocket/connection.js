@@ -1,15 +1,13 @@
-
-const { Message, User, Group, UserGroup, Reaction } = require('../../db/models');
+const { Message, User, UserGroup } = require('../../db/models');
 
 const activeConnections = {};
 
 function connection(ws, request, user) {
   ws.on('error', console.error);
 
-  
   activeConnections[user.id] = { ws, user };
 
-  
+
   const sendActiveUsers = () => {
     const activeUsers = Object.values(activeConnections).map((v) => v.user);
     Object.values(activeConnections).forEach((userConnection) => {
@@ -21,16 +19,15 @@ function connection(ws, request, user) {
     });
   };
 
-  
+
   ws.on('close', () => {
     delete activeConnections[user.id];
-    sendActiveUsers(); 
+    sendActiveUsers();
   });
 
-  
   sendActiveUsers();
 
-  
+
   Message.findAll().then((messages) => {
     const action = {
       type: 'chat/setMessages',
@@ -39,7 +36,6 @@ function connection(ws, request, user) {
     ws.send(JSON.stringify(action));
   });
 
-  
   ws.on('message', async (data) => {
     try {
       const action = JSON.parse(data);
@@ -47,27 +43,35 @@ function connection(ws, request, user) {
 
       switch (type) {
         case 'NEW_MESSAGE': {
-          
           const currentUser = await User.findByPk(user.id);
           if (!currentUser) {
             console.error('User not found');
             return;
           }
 
-          
+          const groupid = payload.groupId || null; 
+
+
           const newMessage = await Message.create({
-            text: payload,
+            text: payload.text,
             authorid: user.id,
-            authorName: currentUser.name, 
+            authorName: currentUser.name,
+            groupId: groupid, 
           });
 
-          
+        
           Object.values(activeConnections).forEach((userConnection) => {
-            const newAction = {
-              type: 'chat/addMessage',
-              payload: newMessage,
-            };
-            userConnection.ws.send(JSON.stringify(newAction));
+            UserGroup.findOne({
+              where: { userId: userConnection.user.id, groupid },  
+            }).then((userGroup) => {
+              if (userGroup) {
+                const newAction = {
+                  type: 'chat/addMessage',
+                  payload: newMessage,
+                };
+                userConnection.ws.send(JSON.stringify(newAction));  
+              }
+            });
           });
 
           break;

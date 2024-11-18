@@ -15,4 +15,17 @@ messagesRouter.route('/').get(async (req, res) => {
   }
 });
 
+messagesRouter.route('/:groupId').get(async (req,res) => {
+  try {
+    const {groupId} = req.params
+    const groupMessages = await Message.findAll({
+      where: {groupid: groupId}
+    })
+    return res.status(200).json(groupMessages)
+  } catch (error) {
+    console.error('Ошибка при получении сообщений:', error) 
+  }
+})
+
+
 module.exports = messagesRouter;
