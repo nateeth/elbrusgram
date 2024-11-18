@@ -9,13 +9,11 @@ import Circle from '../tools/Circle';
 import Eraser from '../tools/Eraser';
 import Line from '../tools/Line';
 
-
 function ToolBar(): JSX.Element {
-  const changeColor = (e: Event) => {
+  const changeColor = (e: React.ChangeEvent<HTMLInputElement>) => {
     toolState.setStrokeColor(e.target.value);
     toolState.setFillColor(e.target.value);
-
-  }
+  };
 
   return (
     <div className="toolbar" style={{ top: 100 }}>
@@ -40,7 +38,7 @@ function ToolBar(): JSX.Element {
         onClick={() => toolState.setTool(new Line(canvasState.canvas))}
       ></Button>
       <Input
-        onChange={(e) => changeColor(e)}
+        onChange={changeColor}
         style={{ marginLeft: 10 }}
         type="color"
         className="toolbar-button"
@@ -53,4 +51,3 @@ function ToolBar(): JSX.Element {
 }
 
 export default ToolBar;
- 

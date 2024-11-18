@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext } from 'react';
 import {
   Box,
   Typography,
@@ -9,12 +9,11 @@ import {
   ListItemText,
   Paper,
 } from '@mui/material';
-import { useAppSelector } from '../../store/hook';
-import ChatwsContext from '../../store/chatws/chatwsContext';
+import { useAppSelector } from '../providers/hooks';
+import ChatwsContext from '../providers/chatws/chatwsContext';
 
 const ChatPage = () => {
   const users = useAppSelector((store) => store.chat.users);
-  const isAuthenticated = useAppSelector((state) => state.auth.status === 'succeeded');
   const messages = useAppSelector((store) => store.chat.messages);
   const { sendData } = useContext(ChatwsContext);
 
@@ -88,12 +87,7 @@ const ChatPage = () => {
             label="Напишите сообщение..."
             sx={{ marginRight: 2 }}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{ height: '100%' }}
-          >
+          <Button type="submit" variant="contained" color="primary" sx={{ height: '100%' }}>
             Отправить
           </Button>
         </Box>

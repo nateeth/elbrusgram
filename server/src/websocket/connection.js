@@ -1,5 +1,4 @@
-
-const { Message, User, Group, UserGroup, Reaction } = require('../../db/models');
+const { Message } = require('../../db/models');
 
 const activeConnections = {};
 
