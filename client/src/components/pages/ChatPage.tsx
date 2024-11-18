@@ -16,6 +16,9 @@ const ChatPage = () => {
   const users = useAppSelector((store) => store.chat.users);
   const messages = useAppSelector((store) => store.chat.messages);
   const { sendData } = useContext(ChatwsContext);
+  const groups = useAppSelector((store) => store.chat.groups);
+
+  console.log(groups);
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>

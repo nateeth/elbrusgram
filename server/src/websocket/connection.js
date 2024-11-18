@@ -1,4 +1,4 @@
-const { Message, User } = require('../../db/models');
+const { Message, User, Group } = require('../../db/models');
 
 const activeConnections = {};
 
@@ -29,6 +29,14 @@ function connection(ws, request, user) {
     const action = {
       type: 'chat/setMessages',
       payload: messages,
+    };
+    ws.send(JSON.stringify(action));
+  });
+
+  Group.findAll().then((groups) => {
+    const action = {
+      type: 'chat/setGroups',
+      payload: groups,
     };
     ws.send(JSON.stringify(action));
   });
@@ -72,6 +80,32 @@ function connection(ws, request, user) {
           });
           break;
         }
+
+        case 'NEW_GROUP': {
+          try {
+            const newGroup = await Group.create({
+              title: payload.title,
+              ownerid: user.id,
+              description: payload.description,
+              chatflag: payload.chatflag,
+            });
+            const groupAction = {
+              type: 'chat/addGroup',
+              payload: newGroup,
+            };
+
+
+            Object.values(activeConnections).forEach((userConnection) => {
+              userConnection.ws.send(JSON.stringify(groupAction));
+            });
+
+            ws.send(JSON.stringify(groupAction));
+          } catch (error) {
+            console.error('Error creating new group:', error);
+          }
+          break;
+        }
+
 
         default:
           console.warn('Unknown action type:', type);
