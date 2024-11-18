@@ -6,6 +6,7 @@ import LoginPage from './components/pages/LoginPage';
 import { createTheme, ThemeProvider } from '@mui/material';
 import ChatPage from './components/pages/ChatPage';
 import PaintPage from './components/pages/PaintPage';
+import ProfilePage from './components/pages/ProfilePage';
 import SignupPage from './components/pages/SignupPage';
 import { useAppSelector } from './components/providers/hooks';
 import { UserStatusEnum } from './schemas/authSchema';
@@ -50,8 +51,12 @@ function App(): React.JSX.Element {
           element: user.status === UserStatusEnum.logged ? <ChatPage /> : <LoginPage />,
         },
         {
-          path: '/paint',
+          path: '/paint/:id',
           element: user.status === UserStatusEnum.logged ? <PaintPage /> : <LoginPage />,
+        },
+        {
+          path: '/profile',
+          element: <ProfilePage />,
         },
       ],
     },

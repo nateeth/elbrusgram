@@ -10,6 +10,7 @@ export type ChatSliceT = {
 const initialState: ChatSliceT = {
   users: [],
   messages: [],
+  draw: '',
 };
 
 export const chatSlice = createSlice({
@@ -25,9 +26,12 @@ export const chatSlice = createSlice({
     setMessages: (state, action: PayloadAction<MessageT[]>) => {
       state.messages = action.payload;
     },
+    setDraw: (state, action) => {
+      state.draw = action.payload;
+    },
   },
 });
 
-export const { setUsers, addMessage } = chatSlice.actions;
+export const { setUsers, addMessage, setDraw } = chatSlice.actions;
 
 export default chatSlice.reducer;

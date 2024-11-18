@@ -2,7 +2,7 @@ import { AppBar, Box, Toolbar, Typography, Button } from '@mui/material';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../providers/hooks';
 import { logoutThunk } from '../providers/auth/authThunks';
-import { UserStatusEnum } from '../../schemas/authSchema';
+import { UserStatusEnum, Navigate } from '../../schemas/authSchema';
 
 export default function NavBar(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -26,7 +26,6 @@ export default function NavBar(): JSX.Element {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: 'white', boxShadow: 'none' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-
           {location.pathname !== '/' && (
             <Typography variant="h4" component="div" sx={{ flexGrow: 0 }}>
               <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -45,7 +44,10 @@ export default function NavBar(): JSX.Element {
                 <Button color="primary" onClick={() => navigate('/chat')}>
                   Чат
                 </Button>
-                <Button color="primary" onClick={() => navigate('/paint')}>
+                <Button
+                  color="primary"
+                  onClick={() => (window.location.href = `/paint/${(+new Date()).toString(16)}`)}
+                >
                   Рисовалка
                 </Button>
                 <Button color="primary" onClick={() => navigate('/profile')}>

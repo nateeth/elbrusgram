@@ -1,19 +1,27 @@
 import { makeAutoObservable } from 'mobx';
 
+
 class CanvasState {
   canvas: HTMLCanvasElement | null = null;
-  undoList: string[] = [];
-  redoList: string[] = [];
+  sessionid: number | null = null;
+  undoList = [];
+  redoList = [];
 
   constructor() {
     makeAutoObservable(this);
   }
 
   setCanvas(canvas: HTMLCanvasElement) {
+  setCanvas(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
   }
 
-  pushToUndo(data: string) {
+  setSessionId(id: number) {
+    this.sessionid = id;
+  }
+
+ 
+  pushToUndo(data) {
     this.undoList.push(data);
   }
 

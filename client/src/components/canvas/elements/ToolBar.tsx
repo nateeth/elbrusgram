@@ -13,7 +13,19 @@ function ToolBar(): JSX.Element {
   const changeColor = (e: React.ChangeEvent<HTMLInputElement>) => {
     toolState.setStrokeColor(e.target.value);
     toolState.setFillColor(e.target.value);
+
+  }
+  
+  const download = () => {
+    const dataUrl = canvasState.canvas.toDataURL();
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = 'img' + '.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
+  
 
   return (
     <div className="toolbar" style={{ top: 100 }}>
@@ -45,7 +57,7 @@ function ToolBar(): JSX.Element {
       ></Input>
       <Button className="toolbar-button undo" onClick={() => canvasState.undo()}></Button>
       <Button className="toolbar-button redo" onClick={() => canvasState.redo()}></Button>
-      <Button className="toolbar-button save"></Button>
+      <Button className="toolbar-button save" onClick={() => download()}></Button>
     </div>
   );
 }

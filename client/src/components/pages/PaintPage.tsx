@@ -46,12 +46,12 @@ function PaintPage(): JSX.Element {
           }}
         >
           <Box
-            // className="appcanvas"
+            className="appcanvas"
             sx={{ marginBottom: 2 }}
           >
-            <ToolBarPage />
-            <SettingsBarPage />
-            <CanvasPage />
+                  <ToolBarPage />
+                  <SettingsBarPage />
+                  <CanvasPage />
           </Box>
         </Paper>
       </Box>
