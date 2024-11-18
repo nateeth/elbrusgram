@@ -31,6 +31,11 @@ module.exports = {
         onDelete: 'CASCADE',
         defaultValue: 1
       },
+      authorName: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        defaultValue: 'Anonymous'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
