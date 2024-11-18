@@ -6,7 +6,7 @@ const usersRouter = require('./routes/usersRouter');
 const messagesRouter = require('./routes/messagesRouter');
 const groupsRouter = require('./routes/groupsRouter');
 const authRouter = require('./routes/authRouter');
-const refreshRouter = require('./routes/refreshRouter');
+const tokensRouter = require('./routes/tokensRouter');
 const wallelementRouter = require('./routes/wallelementRouter');
 
 const app = express();

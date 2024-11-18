@@ -1,6 +1,5 @@
-import { useContext, useEffect, useMemo, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import './Canvas.scss';
-import { observer } from 'mobx-react-lite';
 import { observer } from 'mobx-react-lite';
 import canvasState from '../store/canvasState';
 import toolState from '../store/toolState';
@@ -9,8 +8,8 @@ import Rect from '../tools/Rect';
 import Circle from '../tools/Circle';
 import Eraser from '../tools/Eraser';
 import Line from '../tools/Line';
-import ChatwsContext from '../../../store/chatws/chatwsContext';
-import { useAppSelector } from '../../../store/hook';
+import ChatwsContext from '../../providers/chatws/chatwsContext';
+import { useAppSelector } from '../../providers/hooks';
 
 const CanvasPage = observer(() => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -38,25 +37,23 @@ const CanvasPage = observer(() => {
     }
   }, [draw]);
 
-
   const mouseDownHandler = () => {
     if (canvasRef.current) canvasState.pushToUndo(canvasRef.current.toDataURL());
   };
 
   return (
-      <div className="canvas">
-        <canvas
-          onMouseUp={() => {
-            if (canvasRef.current) sendDataDraw(canvasRef.current.toDataURL());
-          }}
-          onMouseDown={() => mouseDownHandler()}
-          ref={canvasRef}
-          width={1000}
-          height={450}
-        />
-      </div>
+    <div className="canvas">
+      <canvas
+        onMouseUp={() => {
+          if (canvasRef.current) sendDataDraw(canvasRef.current.toDataURL());
+        }}
+        onMouseDown={() => mouseDownHandler()}
+        ref={canvasRef}
+        width={1000}
+        height={450}
+      />
+    </div>
   );
-});
 });
 
 export default CanvasPage;
