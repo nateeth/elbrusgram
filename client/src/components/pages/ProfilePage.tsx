@@ -1,15 +1,9 @@
-import React from 'react';
 import {
   Box,
   Typography,
-  TextField,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
   Paper,
 } from '@mui/material';
-import { useAppSelector } from '../../store/hook';
+import { useAppSelector } from '../providers/hooks';
 
 const ProfilePage = () => {
   const users = useAppSelector((store) => store.chat.users);
