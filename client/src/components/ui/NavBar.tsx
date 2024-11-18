@@ -34,7 +34,7 @@ export default function NavBar(): JSX.Element {
               />
             </Link>
           </Typography>
-
+          
           {user.status === UserStatusEnum.logged ? (
             <div style={{ color: 'blue', fontWeight: '400' }}>
               {/* <div>Добро пожаловать, {user.name}</div> */}
