@@ -8,7 +8,7 @@ function SettingsBar(): JSX.Element {
     <div className="setting-bar" style={{ top: 140 }}>
       <label htmlFor="line-width">Толщина линии</label>
       <Input
-        onChange={(e) => toolState.setLineWidth(e.target.value)}
+        onChange={(e) => toolState.setLineWidth(Number(e.target.value))}
         style={{ margin: '0 10px' }}
         id="line-width"
         type="number"

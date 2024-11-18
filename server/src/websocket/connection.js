@@ -1,4 +1,4 @@
-const { Message, User, Group, UserGroup, Reaction } = require('../../db/models');
+const { Message } = require('../../db/models');
 const activeConnections = {};
 
 function connection(ws, request, user) {
@@ -49,7 +49,7 @@ function connection(ws, request, user) {
       default:
         break;
     }
-  })
+  });
 }
 
 module.exports = connection;

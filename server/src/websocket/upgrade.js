@@ -1,4 +1,4 @@
-const validateCookie = require('../middleware/validateCookie');
+const validateCookie = require('../middlewares/validateCookie');
 const wss = require('./wss');
 
 function upgrade(request, socket, head) {

@@ -1,23 +1,22 @@
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import { AppBar, Box } from '@mui/material';
-import { useAppDispatch, useAppSelector } from '../../store/hook';
-import { logoutUser } from '../../store/authSlice';
-import { Link } from 'react-router-dom';
+import { AppBar, Box, Toolbar, Typography, Button } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../providers/hooks';
+import { logoutThunk } from '../providers/auth/authThunks';
+import { UserStatusEnum } from '../../schemas/authSchema';
 
 export default function NavBar(): JSX.Element {
   const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector((state) => state.auth.status === 'succeeded');
-  const user = useAppSelector((state) => state.auth.user);
-  const username = user?.name;
+  const user = useAppSelector((store) => store.auth.user);
+  const navigate = useNavigate();
 
   const handleLogout = async (): Promise<void> => {
     try {
-      await dispatch(logoutUser()).unwrap();
+      await dispatch(logoutThunk()).unwrap();
       alert('Logged out successfully');
-      window.location.reload();
+
+      navigate('/');
     } catch (error) {
+      console.error('Error logging out:', error);
       alert('Failed to log out');
     }
   };
@@ -27,7 +26,7 @@ export default function NavBar(): JSX.Element {
       <AppBar position="static" sx={{ backgroundColor: 'white', boxShadow: 'none' }}>
         <Toolbar>
           <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-            <Link to="/main" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
               <img
                 src="/Subject.png"
                 alt="Logo"
@@ -35,28 +34,30 @@ export default function NavBar(): JSX.Element {
               />
             </Link>
           </Typography>
-          {/* ПОКА В ЦЕЛЯХ ТЕСТИРОВАНИЯ КНОПКА ДОСТУПНА ВСЕМ */}
-          <Button color="primary" onClick={() => (window.location.href = '/chat')}>
-            Чат
-          </Button>
-          <Button color="primary" onClick={() => (window.location.href = '/paint')}>
-            Рисовалка
-          </Button>
-          {isAuthenticated ? (
-            <div style={{ color: 'blue' }}>
-              <div>Добро пожаловать, {username}</div>
-              <Button color="primary" onClick={() => (window.location.href = '/main')}>
-                На главную
-              </Button>
 
+          {user.status === UserStatusEnum.logged ? (
+            <div style={{ color: 'blue', fontWeight: '400' }}>
+              {/* <div>Добро пожаловать, {user.name}</div> */}
+              <Button color="primary" onClick={() => navigate('/chat')}>
+                Чат
+              </Button>
+              <Button color="primary" onClick={() => navigate('/paint')}>
+                Рисовалка
+              </Button>
+              <Button color="primary" onClick={() => navigate('/profile')}>
+                Профиль
+              </Button>
               <Button color="primary" onClick={handleLogout}>
                 Выйти
               </Button>
             </div>
           ) : (
             <div style={{ color: 'blue', fontWeight: '400' }}>
-              <Button color="primary" onClick={() => (window.location.href = '/login')}>
-                Войти
+              <Button color="primary" onClick={() => navigate('/login')}>
+                Вход
+              </Button>
+              <Button color="primary" onClick={() => navigate('/signup')}>
+                Регистрация
               </Button>
             </div>
           )}
