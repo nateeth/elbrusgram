@@ -9,6 +9,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initialState = {
   users: [],
   messages: [],
+  draw: '',
 };
 
 export const chatSlice = createSlice({
@@ -24,10 +25,13 @@ export const chatSlice = createSlice({
     setMessages: (state, action) => {
       state.messages = action.payload;
     },
+    setDraw: (state, action) => {
+      state.draw = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setUsers, addMessage } = chatSlice.actions;
+export const { setUsers, addMessage, setDraw } = chatSlice.actions;
 
 export default chatSlice.reducer;

@@ -69,6 +69,18 @@ function connection(ws, request, user) {
             };
             userConnection.ws.send(JSON.stringify(newAction));
           });
+        });
+        break;
+      case 'NEW_DRAW':
+        Object.values(activeConnections).forEach((userConnection) => {
+          const newAction = {
+            type: 'chat/setDraw',
+            payload: payload,
+          };
+          userConnection.ws.send(JSON.stringify(newAction));
+        });
+        break;
+
 
           break;
         }

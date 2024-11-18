@@ -18,7 +18,7 @@ function PaintPage(): JSX.Element {
   const users = useAppSelector((store) => store.chat.users);
 
   return (
-     <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>
+    <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>
       <Box
         sx={{
           width: 250,
@@ -54,12 +54,13 @@ function PaintPage(): JSX.Element {
             backgroundColor: '#fff',
           }}
         >
-          <Box 
-          // className="appcanvas" 
-          sx={{ marginBottom: 2 }}>
-              <ToolBarPage />
+          <Box
+            className="appcanvas"
+            sx={{ marginBottom: 2 }}
+          >
+                  <ToolBarPage />
                   <SettingsBarPage />
-              <CanvasPage />
+                  <CanvasPage />
           </Box>
         </Paper>
       </Box>

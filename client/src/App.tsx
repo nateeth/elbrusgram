@@ -5,6 +5,7 @@ import LoginPage from './components/pages/LoginPage';
 import { createTheme, ThemeProvider } from '@mui/material';
 import ChatPage from './components/pages/ChatPage';
 import PaintPage from './components/pages/PaintPage';
+import ProfilePage from './components/pages/ProfilePage';
 
 const theme = createTheme({
   typography: {
@@ -37,12 +38,16 @@ function App(): JSX.Element {
           element: <ChatPage />,
         },
         {
-          path: '/paint',
+          path: '/paint/:id',
           element: <PaintPage />,
         },
         {
           path: '/login',
           element: <LoginPage />,
+        },
+        {
+          path: '/profile',
+          element: <ProfilePage />,
         },
       ],
     },
