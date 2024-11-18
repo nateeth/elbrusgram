@@ -1,5 +1,5 @@
 import { AppBar, Box, Toolbar, Typography, Button } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../providers/hooks';
 import { logoutThunk } from '../providers/auth/authThunks';
 import { UserStatusEnum } from '../../schemas/authSchema';
@@ -8,6 +8,7 @@ export default function NavBar(): JSX.Element {
   const dispatch = useAppDispatch();
   const user = useAppSelector((store) => store.auth.user);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async (): Promise<void> => {
     try {
@@ -24,43 +25,47 @@ export default function NavBar(): JSX.Element {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: 'white', boxShadow: 'none' }}>
-        <Toolbar>
-          <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-            <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <img
-                src="/Subject.png"
-                alt="Logo"
-                style={{ width: '50px', height: 'auto', marginTop: '8px' }}
-              />
-            </Link>
-          </Typography>
-          
-          {user.status === UserStatusEnum.logged ? (
-            <div style={{ color: 'blue', fontWeight: '400' }}>
-              {/* <div>Добро пожаловать, {user.name}</div> */}
-              <Button color="primary" onClick={() => navigate('/chat')}>
-                Чат
-              </Button>
-              <Button color="primary" onClick={() => navigate('/paint')}>
-                Рисовалка
-              </Button>
-              <Button color="primary" onClick={() => navigate('/profile')}>
-                Профиль
-              </Button>
-              <Button color="primary" onClick={handleLogout}>
-                Выйти
-              </Button>
-            </div>
-          ) : (
-            <div style={{ color: 'blue', fontWeight: '400' }}>
-              <Button color="primary" onClick={() => navigate('/login')}>
-                Вход
-              </Button>
-              <Button color="primary" onClick={() => navigate('/signup')}>
-                Регистрация
-              </Button>
-            </div>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+
+          {location.pathname !== '/' && (
+            <Typography variant="h4" component="div" sx={{ flexGrow: 0 }}>
+              <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <img
+                  src="/Subject.png"
+                  alt="Logo"
+                  style={{ width: '50px', height: 'auto', marginTop: '8px' }}
+                />
+              </Link>
+            </Typography>
           )}
+
+          <Box sx={{ display: 'flex', marginLeft: 'auto' }}>
+            {user.status === UserStatusEnum.logged ? (
+              <div style={{ color: 'blue', fontWeight: '400' }}>
+                <Button color="primary" onClick={() => navigate('/chat')}>
+                  Чат
+                </Button>
+                <Button color="primary" onClick={() => navigate('/paint')}>
+                  Рисовалка
+                </Button>
+                <Button color="primary" onClick={() => navigate('/profile')}>
+                  Профиль
+                </Button>
+                <Button color="primary" onClick={handleLogout}>
+                  Выйти
+                </Button>
+              </div>
+            ) : (
+              <div style={{ color: 'blue', fontWeight: '400' }}>
+                <Button color="primary" onClick={() => navigate('/login')}>
+                  Вход
+                </Button>
+                <Button color="primary" onClick={() => navigate('/signup')}>
+                  Регистрация
+                </Button>
+              </div>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
     </Box>

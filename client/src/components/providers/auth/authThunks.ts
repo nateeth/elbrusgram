@@ -61,7 +61,6 @@ export const checkAuthThunk = createAsyncThunk('auth/checkAuthThunk', async () =
 export const logoutThunk = createAsyncThunk('auth/logoutThunk', async () => {
   try {
     await authService.logout();
-    return {}; //убрать
   } catch (error) {
     if (error instanceof AxiosError) {
       console.log('Ошибка запроса при логауте', error.response?.data);

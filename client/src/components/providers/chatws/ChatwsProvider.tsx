@@ -10,30 +10,45 @@ type ChatwsProviderProps = {
 export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.Element {
   const status = useAppSelector((state) => state.auth.user.status);
   const socketRef = useRef<WebSocket | null>(null);
+  const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     function socketInit(): void {
-      if (status === UserStatusEnum.logged) {
-        const socket = new WebSocket('ws://localhost:3000/socket');
-        socket.onopen = () => {
-          console.log('Соединение открыто');
-        };
-        socket.onclose = () => {
-          console.log('Сокет закрылся');
-          setTimeout(socketInit, 3000);
-        };
-        socket.onerror = console.error;
-        socket.onmessage = (message) => {
-          const action = JSON.parse(message.data as string);
-          console.log(`Получено сообщение:`, action);
-          dispatch(action);
-        };
-        socketRef.current = socket;
-      }
+      if (status !== UserStatusEnum.logged) return;
+
+      const socket = new WebSocket('http://localhost:3000');
+      socket.onopen = () => {
+        console.log('Соединение открыто');
+      };
+      socket.onclose = () => {
+        console.log('Сокет закрылся');
+        if (status === UserStatusEnum.logged) {
+          reconnectTimeout.current = setTimeout(socketInit, 3000);
+        }
+      };
+      socket.onerror = console.error;
+      socket.onmessage = (message) => {
+        const action = JSON.parse(message.data as string);
+        console.log(`Получено сообщение:`, action);
+        dispatch(action);
+      };
+      socketRef.current = socket;
     }
+
     socketInit();
-  }, [status]);
+
+    return () => {
+      const socket = socketRef.current;
+      if (socket) {
+        socket.close();
+        console.log('Сокет закрыт при логауте');
+      }
+      if (reconnectTimeout.current) {
+        clearTimeout(reconnectTimeout.current);
+      }
+    };
+  }, [status, dispatch]);
 
   const sendData = useCallback((text: string) => {
     const socket = socketRef.current;
