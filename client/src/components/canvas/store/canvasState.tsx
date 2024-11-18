@@ -1,7 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 
+
 class CanvasState {
-  canvas = null;
+  canvas: HTMLCanvasElement | null = null;
+  sessionid: number | null = null;
   undoList = [];
   redoList = [];
 
@@ -9,10 +11,15 @@ class CanvasState {
     makeAutoObservable(this);
   }
 
-  setCanvas(canvas) {
+  setCanvas(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
   }
 
+  setSessionId(id: number) {
+    this.sessionid = id;
+  }
+
+ 
   pushToUndo(data) {
     this.undoList.push(data);
   }

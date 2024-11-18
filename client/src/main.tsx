@@ -11,7 +11,7 @@ if (container)
 {createRoot(container).render(
   <Provider store={store}>
     <ChatwsProvider>
-    <App />
+        <App />
     </ChatwsProvider>
   </Provider>,
 );

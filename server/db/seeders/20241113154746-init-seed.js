@@ -107,6 +107,43 @@ module.exports = {
         ],
         {},
       );
+      await queryInterface.bulkInsert(
+        'Wallelements',
+        [
+          {
+            userid: 2,
+            wallreaction: 'Давно не виделись',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          {
+            userid: 1,
+            wallreaction: 'Привет медвед',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ],
+        {},
+      );
+
+      await queryInterface.bulkInsert(
+        'Wallauthors',
+        [
+          {
+            wallelementid: 1,
+            userid: 2,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          {
+            wallelementid: 2,
+            userid: 1,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ],
+        {},
+      );
 
   },
 

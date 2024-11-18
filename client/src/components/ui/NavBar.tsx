@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { AppBar, Box } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hook';
 import { logoutUser } from '../../store/authSlice';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 export default function NavBar(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -39,7 +39,12 @@ export default function NavBar(): JSX.Element {
           <Button color="primary" onClick={() => (window.location.href = '/chat')}>
             Чат
           </Button>
-          <Button color="primary" onClick={() => (window.location.href = '/paint')}>
+          <Button
+            color="primary"
+            onClick={() =>
+              (window.location.href = `/paint/${(+new Date()).toString(16)}`)
+            }
+          >
             Рисовалка
           </Button>
           {isAuthenticated ? (

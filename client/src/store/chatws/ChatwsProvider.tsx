@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import ChatwsContext from './chatwsContext';
 import { useAppDispatch, useAppSelector } from '../hook';
 
@@ -44,7 +44,17 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     socket.send(JSON.stringify(action));
   }, []);
 
-  const contextData = useMemo(() => ({ sendData }), []);
+    const sendDataDraw = useCallback((text: string) => {
+      const socket = socketRef.current;
+      if (!socket) return;
+      const action = {
+        type: 'NEW_DRAW',
+        payload: text,
+      };
+      socket.send(JSON.stringify(action));
+    }, []);
+
+  const contextData = useMemo(() => ({ sendData, sendDataDraw }), []);
 
   return <ChatwsContext.Provider value={contextData}>{children}</ChatwsContext.Provider>;
 }
