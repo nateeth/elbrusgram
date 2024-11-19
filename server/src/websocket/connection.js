@@ -34,22 +34,22 @@ function connection(ws, request, user) {
     ws.send(JSON.stringify(action));
   });
 
-  Group.findAll({
-    where: {
-      [Op.or]: [
-        { ownerid: user.id }, 
-      ],
-    },
-    include: [
-      {
-        model: User,
-        as: 'GroupUser',
-        through: { attributes: [] }, 
-        where: { id: user.id }, 
-        required: false, 
-      },
-    ],
-  });
+  // Group.findAll({
+  //   where: {
+  //     [Op.or]: [
+  //       { ownerid: user.id }, 
+  //     ],
+  //   },
+  //   include: [
+  //     {
+  //       model: User,
+  //       as: 'GroupUser',
+  //       through: { attributes: [] }, 
+  //       where: { id: user.id }, 
+  //       required: false, 
+  //     },
+  //   ],
+  // });
   ws.on('message', async (data) => {
     try {
       const action = JSON.parse(data);
@@ -134,6 +134,30 @@ function connection(ws, request, user) {
           }
           break;
         }
+        case 'getGroups': {
+
+          try {
+              const groups = await Group.findAll({
+                  include: [
+                      {
+                          model: User,
+                          as: 'members',
+                          where: { id: user.id },
+                      },
+                  ],
+              });
+
+              const groupsAction = {
+                  type: 'groupsData',
+                  payload: groups,
+              };
+              ws.send(JSON.stringify(groupsAction));
+          } catch (error) {
+              console.error('Error fetching groups:', error);
+          }
+          break;
+      }
+
 
         default:
           console.warn('Unknown action type:', type);
