@@ -46,7 +46,7 @@ export default function NavBar(): JSX.Element {
                 </Button>
                 <Button
                   color="primary"
-                  onClick={() => (window.location.href = `/paint/${(+new Date()).toString(16)}`)}
+                  onClick={() => navigate(`/paint/${(+new Date()).toString(16)}`)}
                 >
                   Рисовалка
                 </Button>
