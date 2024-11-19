@@ -1,7 +1,6 @@
 import CanvasPage from '../canvas/elements/Canvas';
 import '../canvas/elements/Canvas.scss';
 import { Box, Typography, List, ListItemText, Paper, ListItemButton } from '@mui/material';
-import SettingsBarPage from '../canvas/elements/SettingsBar';
 import ToolBarPage from '../canvas/elements/ToolBar';
 import { useAppSelector } from '../providers/hooks';
 
@@ -43,6 +42,8 @@ function PaintPage(): JSX.Element {
             display: 'flex',
             flexDirection: 'column',
             backgroundColor: '#fff',
+            // boxShadow: 'none',  // Убираем тень вокруг Paper
+
           }}
         >
           <Box
@@ -50,7 +51,6 @@ function PaintPage(): JSX.Element {
             sx={{ marginBottom: 2 }}
           >
                   <ToolBarPage />
-                  <SettingsBarPage />
                   <CanvasPage />
           </Box>
         </Paper>
