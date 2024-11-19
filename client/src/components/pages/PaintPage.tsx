@@ -42,8 +42,6 @@ function PaintPage(): JSX.Element {
             display: 'flex',
             flexDirection: 'column',
             backgroundColor: '#fff',
-            // boxShadow: 'none',  // Убираем тень вокруг Paper
-
           }}
         >
           <Box
