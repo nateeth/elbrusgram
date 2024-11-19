@@ -15,4 +15,7 @@ groupsRouter.route('/').get(async (req, res) => {
   }
 });
 
+
+
+
 module.exports = groupsRouter;
