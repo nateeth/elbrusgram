@@ -41,8 +41,6 @@ function connection(ws, request, user) {
     ws.send(JSON.stringify(action));
   });
 
-
-
   ws.on('message', async (data) => {
     try {
       const action = JSON.parse(data);
@@ -70,14 +68,14 @@ function connection(ws, request, user) {
             };
             userConnection.ws.send(JSON.stringify(newAction));
           });
-          break; 
+          break;
         }
 
         case 'NEW_DRAW': {
           Object.values(activeConnections).forEach((userConnection) => {
             const newAction = {
               type: 'chat/setDraw',
-              payload: payload,
+              payload,
             };
             userConnection.ws.send(JSON.stringify(newAction));
           });
@@ -86,39 +84,42 @@ function connection(ws, request, user) {
 
         case 'NEW_GROUP': {
           try {
+            console.log('Creating group with data:', payload);
             const newGroup = await Group.create({
               title: payload.title,
               ownerid: user.id,
               description: payload.description,
               chatflag: payload.chatflag,
             });
+            console.log('New group created:', newGroup);
 
-            const userIds = payload.users; 
+            if (!newGroup || !newGroup.id) {
+              throw new Error('Failed to create a new group');
+            }
 
-            
-            await Promise.all(userIds.map(userId => 
-              UserGroup.create({
-                userid: userId,
-                groupid: newGroup.id,
-              })
-            ));
+            const userIds = payload.users;
+
+            await Promise.all(
+              userIds.map((userId) =>
+                UserGroup.create({
+                  userid: userId,
+                  groupid: newGroup.id,
+                }),
+              ),
+            );
             const groupAction = {
               type: 'chat/addGroup',
               payload: newGroup,
             };
 
-
             Object.values(activeConnections).forEach((userConnection) => {
               userConnection.ws.send(JSON.stringify(groupAction));
             });
-
-            ws.send(JSON.stringify(groupAction));
           } catch (error) {
             console.error('Error creating new group:', error);
           }
           break;
         }
-
 
         default:
           console.warn('Unknown action type:', type);
