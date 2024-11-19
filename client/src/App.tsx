@@ -10,6 +10,7 @@ import ProfilePage from './components/pages/ProfilePage';
 import SignupPage from './components/pages/SignupPage';
 import { useAppSelector } from './components/providers/hooks';
 import { UserStatusEnum } from './schemas/authSchema';
+import OneGroupPage from './components/pages/OneGroupPage';
 
 const theme = createTheme({
   typography: {
@@ -58,6 +59,10 @@ function App(): React.JSX.Element {
           path: '/profile',
           element: <ProfilePage />,
         },
+        {
+          path: '/group/:groupId',
+          element: <OneGroupPage />,
+        }
       ],
     },
   ]);

@@ -1,4 +1,4 @@
-const { Message, User } = require('../../db/models');
+const { Message, User, Group, UserGroup } = require('../../db/models');
 
 const activeConnections = {};
 
@@ -33,6 +33,16 @@ function connection(ws, request, user) {
     ws.send(JSON.stringify(action));
   });
 
+  Group.findAll().then((groups) => {
+    const action = {
+      type: 'chat/setGroups',
+      payload: groups,
+    };
+    ws.send(JSON.stringify(action));
+  });
+
+
+
   ws.on('message', async (data) => {
     try {
       const action = JSON.parse(data);
@@ -47,9 +57,10 @@ function connection(ws, request, user) {
           }
 
           const newMessage = await Message.create({
-            text: payload,
+            text: payload.text,
             authorid: user.id,
             authorName: currentUser.name,
+            groupid: payload.groupid,
           });
 
           Object.values(activeConnections).forEach((userConnection) => {
@@ -72,6 +83,42 @@ function connection(ws, request, user) {
           });
           break;
         }
+
+        case 'NEW_GROUP': {
+          try {
+            const newGroup = await Group.create({
+              title: payload.title,
+              ownerid: user.id,
+              description: payload.description,
+              chatflag: payload.chatflag,
+            });
+
+            const userIds = payload.users; 
+
+            
+            await Promise.all(userIds.map(userId => 
+              UserGroup.create({
+                userid: userId,
+                groupid: newGroup.id,
+              })
+            ));
+            const groupAction = {
+              type: 'chat/addGroup',
+              payload: newGroup,
+            };
+
+
+            Object.values(activeConnections).forEach((userConnection) => {
+              userConnection.ws.send(JSON.stringify(groupAction));
+            });
+
+            ws.send(JSON.stringify(groupAction));
+          } catch (error) {
+            console.error('Error creating new group:', error);
+          }
+          break;
+        }
+
 
         default:
           console.warn('Unknown action type:', type);
