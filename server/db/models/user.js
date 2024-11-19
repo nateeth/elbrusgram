@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate({Group, Message, UserGroup, Reaction, Wallelement}) {
       this.hasMany(Group, {foreignKey: 'ownerid', as: 'OwnerGroup'});
-      this.belongsToMany(Group, { through: 'UserGroups', as: 'UserGroup' }); 
+      this.belongsToMany(Group, { through: 'UserGroup', as: 'UserGroups', foreignKey: 'userid', otherKey: 'groupid' }); 
       this.hasMany(Reaction, {foreignKey: 'authorid'});
       this.hasMany(Message, {foreignKey: 'authorid'});
       this.hasMany(Wallelement, { foreignKey: 'userid', as: 'Userwallprofile' });

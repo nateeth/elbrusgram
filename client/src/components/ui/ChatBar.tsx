@@ -44,9 +44,10 @@ import ChatwsContext from '../providers/chatws/chatwsContext';
   
   
     const handleUserChange = (userId: string) => {
-      setSelectedUsers((prev) =>
-        prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
-      );
+        console.log('Toggling user:', userId);
+        setSelectedUsers((prev) =>
+            prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]
+        );
     };
   
     const handleSubmitGroup = (e) => {

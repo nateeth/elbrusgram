@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { Message, User, Group, UserGroup } = require('../../db/models');
 
 const activeConnections = {};
@@ -33,14 +34,22 @@ function connection(ws, request, user) {
     ws.send(JSON.stringify(action));
   });
 
-  Group.findAll().then((groups) => {
-    const action = {
-      type: 'chat/setGroups',
-      payload: groups,
-    };
-    ws.send(JSON.stringify(action));
+  Group.findAll({
+    where: {
+      [Op.or]: [
+        { ownerid: user.id }, 
+      ],
+    },
+    include: [
+      {
+        model: User,
+        as: 'GroupUser',
+        through: { attributes: [] }, 
+        where: { id: user.id }, 
+        required: false, 
+      },
+    ],
   });
-
   ws.on('message', async (data) => {
     try {
       const action = JSON.parse(data);
@@ -84,7 +93,7 @@ function connection(ws, request, user) {
 
         case 'NEW_GROUP': {
           try {
-            console.log('Creating group with data:', payload);
+            console.log('Payload received on server:', payload);
             const newGroup = await Group.create({
               title: payload.title,
               ownerid: user.id,
@@ -97,7 +106,7 @@ function connection(ws, request, user) {
               throw new Error('Failed to create a new group');
             }
 
-            const userIds = payload.users;
+            const userIds = [newGroup.ownerid, ...(payload.users || [])];
 
             await Promise.all(
               userIds.map((userId) =>
@@ -109,12 +118,17 @@ function connection(ws, request, user) {
             );
             const groupAction = {
               type: 'chat/addGroup',
-              payload: newGroup,
+              payload: {
+                ...newGroup.toJSON(),
+                users: userIds,
+              },
             };
 
-            Object.values(activeConnections).forEach((userConnection) => {
-              userConnection.ws.send(JSON.stringify(groupAction));
-            });
+            Object.values(activeConnections)
+              .filter((userConnection) => userIds.includes(userConnection.user.id))
+              .forEach((userConnection) => {
+                userConnection.ws.send(JSON.stringify(groupAction));
+              });
           } catch (error) {
             console.error('Error creating new group:', error);
           }
