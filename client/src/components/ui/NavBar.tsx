@@ -2,7 +2,7 @@ import { AppBar, Box, Toolbar, Typography, Button } from '@mui/material';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../providers/hooks';
 import { logoutThunk } from '../providers/auth/authThunks';
-import { UserStatusEnum, Navigate } from '../../schemas/authSchema';
+import { UserStatusEnum } from '../../schemas/authSchema';
 
 export default function NavBar(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -46,11 +46,11 @@ export default function NavBar(): JSX.Element {
                 </Button>
                 <Button
                   color="primary"
-                  onClick={() => (window.location.href = `/paint/${(+new Date()).toString(16)}`)}
+                  onClick={() => navigate(`/paint/${(+new Date()).toString(16)}`)}
                 >
                   Рисовалка
                 </Button>
-                <Button color="primary" onClick={() => navigate('/profile')}>
+                <Button color="primary" onClick={() => navigate(`/profile/${user.id}`)}>
                   Профиль
                 </Button>
                 <Button color="primary" onClick={handleLogout}>

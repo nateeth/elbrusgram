@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './auth/authSlice';
 import chatReducer from './chatws/chatSlice';
+import postReducer from './wall/postsSlice'
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     chat: chatReducer,
+    post: postReducer,
   },
 });
 

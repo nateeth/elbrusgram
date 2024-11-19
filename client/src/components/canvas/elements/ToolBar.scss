@@ -1,7 +1,5 @@
-@import './variables';
-
 .toolbar{
-    height: $toolbar-height;
+    height: 40px;
     background-color: white;
     display: flex;
     margin-left: 80px;
@@ -48,7 +46,7 @@
     }
 }
 .setting-bar{
-    height: $toolbar-height;
+    height: 40px;
     background-color: white;
     margin-left: 80px;
     display: flex;
@@ -56,6 +54,6 @@
     position: absolute;
     width: 70%;
     box-shadow: 0 4px 5px gray;
-    top: $toolbar-height;
+    top: 40px;
 }
 
