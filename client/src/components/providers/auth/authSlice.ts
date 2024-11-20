@@ -18,10 +18,7 @@ export const authSlice = createSlice({
     setAccessToken: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload;
       console.log('Токен установлен в store:', action.payload);
-    },
-    updateAvatar: (state, action: PayloadAction<string>) => {
-      state.user = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder

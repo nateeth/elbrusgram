@@ -12,12 +12,19 @@ import { useParams } from 'react-router-dom';
 import { addPost, deletePost } from '../providers/wall/postsSlice';
 import axiosInstance from '../../services/axiosInstance';
 
-
 const ProfilePage = () => {
-  const [updatedUser, setUpdatedUser] = useState({});
   const dispatch = useAppDispatch();
   const params = useParams();
+  //emoji input
+  const [text, setText] = useState('');
+  function handleOnEnter(text) {
+     console.log('enter', text);
+   }
+
+  //input gathering
   const user = useAppSelector((state) => state.auth.user);
+  const users = useAppSelector((state) => state.users)
+  const userpage = users.users.find((elem)=> elem.id === Number(params.id));
 
   useEffect(() => {
     void dispatch(loadWallPostsThunk(params.id));
@@ -27,17 +34,18 @@ const ProfilePage = () => {
 
 const editImage = async (e) => {
   e.preventDefault();
+  if (user.id !== Number(params.id)) return;
   if (e.target.files.length === 0) return;
   const file = e.target.files[0];
   const formData = new FormData();
   formData.append('img', file); 
   try {
-    const response = await axiosInstance.patch(`/users/${user.id}/images`, formData, {
+    await axiosInstance.patch(`/users/${user.id}/images`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-    dispatch(updateAvatar(response));
+    alert('Аватар успешно обновлен');
   } catch (error) {
     console.error('Error uploading image:', error);
   }
@@ -81,7 +89,7 @@ const editImage = async (e) => {
               display: 'flex',
               flexDirection: 'column',
             }}
-            src={`http://localhost:3000/img/${user?.avatar}`}
+            src={`http://localhost:3000/img/${userpage?.avatar}`}
             alt="avatar"
           ></Box>
           <Box
@@ -100,13 +108,13 @@ const editImage = async (e) => {
               Обо мне:
             </Typography>
             <Typography variant="h6" gutterBottom>
-              {user?.name}
+              {userpage?.name}
             </Typography>
             <Typography variant="h6" gutterBottom>
-              {user?.nick}
+              {userpage?.nick}
             </Typography>
             <Typography variant="h6" gutterBottom>
-              {user?.email}
+              {userpage?.email}
             </Typography>
           </Box>
         </Box>
