@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import ChatwsContext from './chatwsContext';
 import { useAppDispatch, useAppSelector } from '../../providers/hooks';
 import { UserStatusEnum } from '../../../schemas/authSchema';
+import { group } from 'console';
 
 type ChatwsProviderProps = {
   children: JSX.Element;
@@ -50,13 +51,28 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     };
   }, [status, dispatch]);
 
-  const sendData = useCallback((text: string) => {
+  const sendData = useCallback((text: string, groupId: number) => {
     const socket = socketRef.current;
     if (!socket) return;
     const action = {
       type: 'NEW_MESSAGE',
-      payload: text,
+      payload: {
+        text: text,
+        groupid: groupId
+      }
     };
+    socket.send(JSON.stringify(action));
+  }, []);
+
+  const sendGroupData = useCallback((groupData) => {
+    const socket = socketRef.current;
+    if (!socket) return;
+  
+    const action = {
+      type: 'NEW_GROUP',
+      payload: groupData,
+    };
+  
     socket.send(JSON.stringify(action));
   }, []);
 
@@ -70,7 +86,9 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     socket.send(JSON.stringify(action));
   }, []);
 
-  const contextData = useMemo(() => ({ sendData, sendDataDraw }), []);
+
+
+  const contextData = useMemo(() => ({ sendData, sendDataDraw, sendGroupData }), []);
 
   return <ChatwsContext.Provider value={contextData}>{children}</ChatwsContext.Provider>;
 }
