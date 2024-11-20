@@ -131,8 +131,8 @@ import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext'
                   key={user.id}
                   control={
                     <Checkbox
-                      checked={selectedUsers.includes(user.id)}
-                      onChange={() => handleUserChange(user.id)}
+                      checked={selectedUsers.includes(String(user.id))}
+                      onChange={() => handleUserChange(String(user.id))}
                     />
                   }
                   label={user.name}
