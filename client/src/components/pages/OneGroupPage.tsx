@@ -18,7 +18,7 @@ import ChatBar from '../ui/ChatBar';
 export default function OneGroupPage(): JSX.Element {
   const messages = useAppSelector((store) => store.chat.messages);
   const user = useAppSelector((state) => state.auth.user);
-  const { sendData, editMessage } = useContext(ChatwsContext);
+  const { sendData, editMessage, deleteMessage } = useContext(ChatwsContext);
   const { groupId } = useParams();
   const groupmessages = messages.filter((message) => message.groupid === Number(groupId));
 
@@ -26,7 +26,6 @@ export default function OneGroupPage(): JSX.Element {
   const [currentMessageId, setCurrentMessageId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState<number | null>(null);
   const [editingText, setEditingText] = useState<string>('');
-  const [editedMessages, setEditedMessages] = useState<number[]>([]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>, messageId: number, text: string) => {
     setAnchorEl(event.currentTarget);
@@ -41,7 +40,10 @@ export default function OneGroupPage(): JSX.Element {
 
   const handleDelete = () => {
     console.log(`Deleting message with id: ${currentMessageId}`);
-    handleClose();
+    if (currentMessageId !== null) {
+      deleteMessage(currentMessageId, Number(groupId));
+      handleClose();
+    }
   };
 
   const handleEdit = () => {
@@ -57,7 +59,6 @@ export default function OneGroupPage(): JSX.Element {
   const handleSave = () => {
     if (isEditing !== null && editingText.trim()) {
       editMessage(isEditing, editingText, Number(groupId));
-      setEditedMessages((prev) => [...prev, isEditing]);
       setIsEditing(null);
     }
   };
