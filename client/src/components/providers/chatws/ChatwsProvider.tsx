@@ -3,7 +3,6 @@ import ChatwsContext, { groupDataType } from './chatwsContext';
 import { useAppDispatch, useAppSelector } from '../../providers/hooks';
 import { UserStatusEnum } from '../../../schemas/authSchema';
 
-
 type ChatwsProviderProps = {
   children: JSX.Element;
 };
@@ -58,8 +57,22 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
       type: 'NEW_MESSAGE',
       payload: {
         text: text,
-        groupid: groupId
-      }
+        groupid: groupId,
+      },
+    };
+    socket.send(JSON.stringify(action));
+  }, []);
+
+  const editMessage = useCallback((messageId: number, newText: string, groupId: number) => {
+    const socket = socketRef.current;
+    if (!socket) return;
+    const action = {
+      type: 'EDIT_MESSAGE',
+      payload: {
+        messageId,
+        text: newText,
+        groupid: groupId,
+      },
     };
     socket.send(JSON.stringify(action));
   }, []);
@@ -86,9 +99,7 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     socket.send(JSON.stringify(action));
   }, []);
 
-
-
-  const contextData = useMemo(() => ({ sendData, sendDataDraw, sendGroupData }), []);
+  const contextData = useMemo(() => ({ sendData, sendDataDraw, editMessage, sendGroupData }), [sendData, sendDataDraw, editMessage]);
 
   return <ChatwsContext.Provider value={contextData}>{children}</ChatwsContext.Provider>;
 }

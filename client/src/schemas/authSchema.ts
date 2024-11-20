@@ -11,6 +11,7 @@ export const userDataSchema = z.object({
   name: z.string(),
   nick: z.string(),
   email: z.string(),
+  avatar: z.string(),
 });
 
 export type UserDataType = z.infer<typeof userDataSchema>;
