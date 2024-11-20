@@ -13,9 +13,11 @@ import {
   import React, { useContext, useEffect, useState } from 'react';
   import { useNavigate } from 'react-router-dom';
   import { useAppDispatch, useAppSelector } from '../providers/hooks';
+  import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 import { getAllUsers } from '../providers/users/userThunk';
 import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext';
+
   
 
 
@@ -81,13 +83,15 @@ import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext'
           flexDirection: 'column',
         }}
       >
-        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'space-around' }}>
+        <Box >
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>   
           <Typography variant="h6" gutterBottom>
-            Пользователи
+            Чаты
           </Typography>
-          <Button onClick={handleOpen}>
-            чат
+          <Button onClick={handleOpen} sx={{}}>
+            <AddCircleOutlineIcon />
           </Button>
+            </Box>
           <Modal
             open={open}
             onClose={handleClose}
@@ -150,11 +154,16 @@ import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext'
           </Modal>
         </Box>
         <List sx={{ padding: 0 }}>
-          {groups.map((group) => (
-            <ListItem key={group.id}>
-              <ListItemText primary={group.title} onClick={() => navigate(`/group/${group.id}`)} />
-            </ListItem>
-          ))}
+          {groups.map((group) => {
+            const cropTitle = group.title.length > 20 ? group.title.slice(0, 20) + '...' : group.title;
+            return (
+                
+                <ListItem key={group.id}>
+                   
+                  <ListItemText primary={cropTitle} onClick={() => navigate(`/group/${group.id}`)} />
+                </ListItem>
+            )
+        })}
         </List>
       </Box>
     );
