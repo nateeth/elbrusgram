@@ -12,6 +12,7 @@ type ChatwsContextType = {
   sendDataDraw: (text: string) => void;
   sendGroupData(groupData: groupDataType): void;
   editMessage: (messageId: number, newText: string, groupId: number) => void;
+  deleteMessage: (messageId: number, groupId: number) => void;
 };
 
 const ChatwsContext = createContext<ChatwsContextType>({
@@ -19,6 +20,7 @@ const ChatwsContext = createContext<ChatwsContextType>({
   sendDataDraw: () => {},
   sendGroupData: () => {},
   editMessage: () => {},
+  deleteMessage: () => {},
 });
 
 export default ChatwsContext;
