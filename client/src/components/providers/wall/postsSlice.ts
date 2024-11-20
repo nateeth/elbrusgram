@@ -10,6 +10,7 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
+
     addPost: (state, action: PayloadAction<WallPostsT>) => {
       const newPost: WallPostsT = {
         id: state?.posts.length + 1,

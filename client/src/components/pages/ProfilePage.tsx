@@ -25,16 +25,23 @@ const ProfilePage = () => {
 
   const posts = useAppSelector((store) => store.post.posts); 
 
-  const editImage = async (e) => {
-      e.preventDefault();
-      if (e.target.files.length === 0) return;
-      const file = e.target.files[0];
-      console.log(file);
-      const formData = new FormData();
-      formData.append('img', file);
-      const response = await axiosInstance.patch(`/users/${user.id}/images`, file);
-      setUpdatedUser(response.data);
-  };
+const editImage = async (e) => {
+  e.preventDefault();
+  if (e.target.files.length === 0) return;
+  const file = e.target.files[0];
+  const formData = new FormData();
+  formData.append('img', file); 
+  try {
+    const response = await axiosInstance.patch(`/users/${user.id}/images`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    dispatch(updateAvatar(response));
+  } catch (error) {
+    console.error('Error uploading image:', error);
+  }
+};
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>

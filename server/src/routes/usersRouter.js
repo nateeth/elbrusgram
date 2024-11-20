@@ -28,7 +28,7 @@ usersRouter
       console.log(req.file);
       const oldUser = await User.findByPk(req.params.userid);
       if (req.file) {
-          const newFilename = req.file ? req.file.name : oldUser.avatar;
+          const newFilename = req.file ? req.file.filename : oldUser.avatar;
           // await removeImage(oldUser.avatar); // раскомментируй, чтобы картинки удалялись
           await oldUser.update({ avatar: newFilename });
         }
