@@ -5,7 +5,7 @@ export type groupDataType = {
   title: string,
           description: string;
           chatflag: boolean;
-          ownerid: number;
+          ownerid: number | null;
           users: string[];
 }
 type ChatwsContextType = {
