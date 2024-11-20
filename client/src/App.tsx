@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './components/pages/HomePage';
@@ -8,9 +8,10 @@ import ChatPage from './components/pages/ChatPage';
 import PaintPage from './components/pages/PaintPage';
 import ProfilePage from './components/pages/ProfilePage';
 import SignupPage from './components/pages/SignupPage';
-import { useAppSelector } from './components/providers/hooks';
+import { useAppDispatch, useAppSelector } from './components/providers/hooks';
 import { UserStatusEnum } from './schemas/authSchema';
 import OneGroupPage from './components/pages/OneGroupPage';
+import { checkAuthThunk } from './components/providers/auth/authThunks';
 
 const theme = createTheme({
   typography: {
@@ -29,7 +30,12 @@ const theme = createTheme({
 });
 
 function App(): React.JSX.Element {
+  const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    void dispatch(checkAuthThunk());
+  }, []);
 
   const router = createBrowserRouter([
     {
@@ -62,10 +68,12 @@ function App(): React.JSX.Element {
         {
           path: '/group/:groupId',
           element: <OneGroupPage />,
-        }
+        },
       ],
     },
   ]);
+
+  if (user.status === UserStatusEnum.pending) return <h1>Loading...</h1>;
 
   return (
     <ThemeProvider theme={theme}>
