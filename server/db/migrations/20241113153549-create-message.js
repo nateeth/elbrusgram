@@ -1,4 +1,5 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -17,24 +18,28 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: {
           model: 'Users',
-          key: 'id'
+          key: 'id',
         },
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
       },
       groupid: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Groups',
-          key: 'id'
+          key: 'id',
         },
         onDelete: 'CASCADE',
-        defaultValue: 1
+        defaultValue: 1,
       },
       authorName: {
         allowNull: false,
         type: Sequelize.STRING,
-        defaultValue: 'Anonymous'
+        defaultValue: 'Anonymous',
+      },
+      isEdited: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
       createdAt: {
         allowNull: false,
@@ -50,5 +55,5 @@ module.exports = {
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Messages');
-  }
+  },
 };

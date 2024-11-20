@@ -26,6 +26,7 @@ export default function OneGroupPage(): JSX.Element {
   const [currentMessageId, setCurrentMessageId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState<number | null>(null);
   const [editingText, setEditingText] = useState<string>('');
+  const [editedMessages, setEditedMessages] = useState<number[]>([]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>, messageId: number, text: string) => {
     setAnchorEl(event.currentTarget);
@@ -56,6 +57,7 @@ export default function OneGroupPage(): JSX.Element {
   const handleSave = () => {
     if (isEditing !== null && editingText.trim()) {
       editMessage(isEditing, editingText, Number(groupId));
+      setEditedMessages((prev) => [...prev, isEditing]);
       setIsEditing(null);
     }
   };
@@ -102,9 +104,19 @@ export default function OneGroupPage(): JSX.Element {
                         </IconButton>
                       </Box>
                     ) : (
-                      <Typography variant="body1" sx={{ marginLeft: 2 }}>
-                        {message.text}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        {message.isEdited && (
+                          <Typography
+                            variant="body2"
+                            sx={{ fontStyle: 'italic', color: 'grey', marginRight: 1 }}
+                          >
+                            ред.
+                          </Typography>
+                        )}
+                        <Typography variant="body1" sx={{ marginLeft: 2 }}>
+                          {message.text}
+                        </Typography>
+                      </Box>
                     )}
                   </Box>
 
@@ -155,13 +167,15 @@ export default function OneGroupPage(): JSX.Element {
       </Box>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        <MenuItem onClick={handleDelete} sx={{ color: 'red', fontSize: '0.875rem' }}>
-          Удалить
-        </MenuItem>
         {user?.id === messages.find((message) => message.id === currentMessageId)?.authorid && (
-          <MenuItem onClick={handleEdit} sx={{ fontSize: '0.875rem' }}>
-            Редактировать
-          </MenuItem>
+          <>
+            <MenuItem onClick={handleDelete} sx={{ color: 'red', fontSize: '0.875rem' }}>
+              Удалить
+            </MenuItem>
+            <MenuItem onClick={handleEdit} sx={{ fontSize: '0.875rem' }}>
+              Редактировать
+            </MenuItem>
+          </>
         )}
         <MenuItem onClick={handleForward} sx={{ fontSize: '0.875rem' }}>
           Переслать

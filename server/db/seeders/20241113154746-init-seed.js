@@ -1,10 +1,11 @@
 'use strict';
+
 const { hashSync } = require('bcrypt');
 const user = require('../models/user');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
       'Users',
       [
@@ -47,7 +48,7 @@ module.exports = {
           chatflag: '1',
           createdAt: new Date(),
           updatedAt: new Date(),
-        }
+        },
       ],
       {},
     );
@@ -59,6 +60,7 @@ module.exports = {
           authorid: 1,
           groupid: 1,
           authorName: 'Alex',
+          isEdited: false,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -67,6 +69,7 @@ module.exports = {
           authorid: 2,
           groupid: 1,
           authorName: 'Charlie',
+          isEdited: false,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -90,55 +93,55 @@ module.exports = {
         },
       ],
       {},
-    );  
-      await queryInterface.bulkInsert(
-        'Reactions',
-        [
-          {
-            reaction: '🥳',
-            authorid: 1,
-            messageid: 1,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            reaction: '😉',
-            authorid: 2,
-            messageid: 2,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        ],
-        {},
-      );
-      await queryInterface.bulkInsert(
-        'Wallelements',
-        [
-          {
-            userid: 2,
-            authorid: 1,
-            wallreaction: 'Давно не виделись',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            userid: 1,
-            authorid: 2,
-            wallreaction: 'Привет медвед',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        ],
-        {},
-      );
+    );
+    await queryInterface.bulkInsert(
+      'Reactions',
+      [
+        {
+          reaction: '🥳',
+          authorid: 1,
+          messageid: 1,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          reaction: '😉',
+          authorid: 2,
+          messageid: 2,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+      {},
+    );
+    await queryInterface.bulkInsert(
+      'Wallelements',
+      [
+        {
+          userid: 2,
+          authorid: 1,
+          wallreaction: 'Давно не виделись',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          userid: 1,
+          authorid: 2,
+          wallreaction: 'Привет медвед',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+      {},
+    );
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     /**
      * Add commands to revert seed here.
      *
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-  }
+  },
 };
