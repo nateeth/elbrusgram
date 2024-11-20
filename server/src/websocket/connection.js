@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { Message, User, Group, UserGroup } = require('../../db/models');
 
 const activeConnections = {};
@@ -33,16 +34,22 @@ function connection(ws, request, user) {
     ws.send(JSON.stringify(action));
   });
 
-  Group.findAll().then((groups) => {
-    const action = {
-      type: 'chat/setGroups',
-      payload: groups,
-    };
-    ws.send(JSON.stringify(action));
-  });
-
-
-
+  // Group.findAll({
+  //   where: {
+  //     [Op.or]: [
+  //       { ownerid: user.id }, 
+  //     ],
+  //   },
+  //   include: [
+  //     {
+  //       model: User,
+  //       as: 'GroupUser',
+  //       through: { attributes: [] }, 
+  //       where: { id: user.id }, 
+  //       required: false, 
+  //     },
+  //   ],
+  // });
   ws.on('message', async (data) => {
     try {
       const action = JSON.parse(data);
@@ -70,14 +77,14 @@ function connection(ws, request, user) {
             };
             userConnection.ws.send(JSON.stringify(newAction));
           });
-          break; 
+          break;
         }
 
         case 'NEW_DRAW': {
           Object.values(activeConnections).forEach((userConnection) => {
             const newAction = {
               type: 'chat/setDraw',
-              payload: payload,
+              payload,
             };
             userConnection.ws.send(JSON.stringify(newAction));
           });
@@ -86,38 +93,70 @@ function connection(ws, request, user) {
 
         case 'NEW_GROUP': {
           try {
+            console.log('Payload received on server:', payload);
             const newGroup = await Group.create({
               title: payload.title,
               ownerid: user.id,
               description: payload.description,
               chatflag: payload.chatflag,
             });
+            console.log('New group created:', newGroup);
 
-            const userIds = payload.users; 
+            if (!newGroup || !newGroup.id) {
+              throw new Error('Failed to create a new group');
+            }
 
-            
-            await Promise.all(userIds.map(userId => 
-              UserGroup.create({
-                userid: userId,
-                groupid: newGroup.id,
-              })
-            ));
+            const userIds = [newGroup.ownerid, ...(payload.users || [])];
+
+            await Promise.all(
+              userIds.map((userId) =>
+                UserGroup.create({
+                  userid: userId,
+                  groupid: newGroup.id,
+                }),
+              ),
+            );
             const groupAction = {
               type: 'chat/addGroup',
-              payload: newGroup,
+              payload: {
+                ...newGroup.toJSON(),
+                users: userIds,
+              },
             };
 
-
-            Object.values(activeConnections).forEach((userConnection) => {
-              userConnection.ws.send(JSON.stringify(groupAction));
-            });
-
-            ws.send(JSON.stringify(groupAction));
+            Object.values(activeConnections)
+              .filter((userConnection) => userIds.includes(userConnection.user.id))
+              .forEach((userConnection) => {
+                userConnection.ws.send(JSON.stringify(groupAction));
+              });
           } catch (error) {
             console.error('Error creating new group:', error);
           }
           break;
         }
+        case 'getGroups': {
+
+          try {
+              const groups = await Group.findAll({
+                  include: [
+                      {
+                          model: User,
+                          as: 'members',
+                          where: { id: user.id },
+                      },
+                  ],
+              });
+
+              const groupsAction = {
+                  type: 'groupsData',
+                  payload: groups,
+              };
+              ws.send(JSON.stringify(groupsAction));
+          } catch (error) {
+              console.error('Error fetching groups:', error);
+          }
+          break;
+      }
 
 
         default:

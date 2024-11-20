@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useAppSelector } from '../providers/hooks';
 import ChatwsContext from '../providers/chatws/chatwsContext';
 
-import ChatBar from '../ui/chatBar';
+import ChatBar from '../ui/ChatBar';
 
 export default function OneGroupPage(): JSX.Element {
   const messages = useAppSelector((store) => store.chat.messages);
@@ -17,7 +17,7 @@ export default function OneGroupPage(): JSX.Element {
     <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>
       <ChatBar />
 
-      <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>
+      <Box sx={{ display: 'flex', height: '90vh', width: '100%', backgroundColor: '#E3F2FD' }}>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Paper
             sx={{

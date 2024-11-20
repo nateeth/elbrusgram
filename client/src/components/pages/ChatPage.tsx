@@ -5,7 +5,7 @@ import OneGroupPage from './OneGroupPage';
 const ChatPage = () => {
   return (
     <Box>
-      <OneGroupPage />
+      <OneGroupPage  />
     </Box>
   );
 };
