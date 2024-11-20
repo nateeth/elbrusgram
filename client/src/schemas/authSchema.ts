@@ -21,11 +21,14 @@ export const backendAuthSchema = z.object({
 });
 
 export type UserType =
-  | { status: UserStatusEnum.pending }
-  | { status: UserStatusEnum.guest }
+
+  | { status: UserStatusEnum.pending; id: null }
+  | { status: UserStatusEnum.guest; id: null }
   | ({
       status: UserStatusEnum.logged;
+      id: number
     } & UserDataType);
+    
 
 export type AuthType = {
   accessToken: string;

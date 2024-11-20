@@ -1,8 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getAllUsers } from "./userThunk";
+import type { UserDataType } from "../../../schemas/authSchema";
+
+export type UserSliceType = {
+    users: UserDataType[];
+    error: string | null
+}
 
 
-const initialState = {
+const initialState: UserSliceType = {
     users: [],
     error: null
 }

@@ -15,8 +15,10 @@ import {
   import { useAppDispatch, useAppSelector } from '../providers/hooks';
 
 import { getAllUsers } from '../providers/users/userThunk';
-import ChatwsContext from '../providers/chatws/chatwsContext';
+import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext';
   
+
+
   export default function ChatBar(): JSX.Element {
     const [open, setOpen] = useState(false);
     const [groupTitle, setGroupTitle] = useState('');
@@ -50,11 +52,11 @@ import ChatwsContext from '../providers/chatws/chatwsContext';
         );
     };
   
-    const handleSubmitGroup = (e) => {
+    const handleSubmitGroup = (e: React.FormEvent) => {
         e.preventDefault();
         
         console.log('Submitting group data:', { groupTitle, groupDescription, selectedUsers });
-        const newGroupData = {
+        const newGroupData: groupDataType = {
           title: groupTitle,
           description: groupDescription,
           chatflag: false,
@@ -83,7 +85,7 @@ import ChatwsContext from '../providers/chatws/chatwsContext';
           <Typography variant="h6" gutterBottom>
             Пользователи
           </Typography>
-          <Button variant="h6" gutterBottom onClick={handleOpen}>
+          <Button onClick={handleOpen}>
             чат
           </Button>
           <Modal
@@ -124,7 +126,7 @@ import ChatwsContext from '../providers/chatws/chatwsContext';
   
               
               <Typography variant="subtitle1">Выберите пользователей:</Typography>
-              {users.map((user) => (
+              {users.map((user ) => (
                 <FormControlLabel
                   key={user.id}
                   control={

@@ -5,7 +5,10 @@ import { checkAuthThunk, loginThunk, logoutThunk, signupThunk } from './authThun
 
 const initialState: AuthType = {
   accessToken: '',
-  user: { status: UserStatusEnum.pending },
+  user: { 
+    status: UserStatusEnum.pending,
+    id: null,
+  },
 };
 
 export const authSlice = createSlice({
@@ -35,7 +38,7 @@ export const authSlice = createSlice({
       })
       .addCase(logoutThunk.fulfilled, (state) => {
         state.accessToken = '';
-        state.user = { status: UserStatusEnum.guest };
+        state.user = { status: UserStatusEnum.guest, id: null };
         console.log(state.user);
       });
   },
