@@ -2,13 +2,14 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import ChatwsContext, { groupDataType } from './chatwsContext';
 import { useAppDispatch, useAppSelector } from '../../providers/hooks';
 import { UserStatusEnum } from '../../../schemas/authSchema';
+import { RootState } from '../store';
 
 type ChatwsProviderProps = {
   children: JSX.Element;
 };
 
 export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.Element {
-  const status = useAppSelector((state) => state.auth.user.status);
+  const status = useAppSelector((state: RootState) => state.auth.user.status);
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
   const dispatch = useAppDispatch();
