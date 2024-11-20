@@ -15,18 +15,15 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(Reaction, {foreignKey: 'authorid'});
       this.hasMany(Message, {foreignKey: 'authorid'});
       this.hasMany(Wallelement, { foreignKey: 'userid', as: 'Userwallprofile' });
-      this.belongsToMany(Wallelement, {
-        through: 'Wallauthor',
-        foreignKey: 'userid',
-        as: 'Userwallauthor',
-      });
+      this.hasMany(Wallelement, { foreignKey: 'authorid', as: 'Userwallauthor' });
     }
   }
   User.init({
     name: DataTypes.STRING,
     email: DataTypes.STRING,
     hashpass: DataTypes.STRING,
-    nick: DataTypes.STRING
+    nick: DataTypes.STRING,
+    avatar: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'User',

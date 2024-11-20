@@ -5,6 +5,7 @@ import { MessageT } from '../../../schemas/messageSchema';
 export type ChatSliceT = {
   users: UserDataType[];
   messages: MessageT[];
+  draw: string;
 };
 
 const initialState: ChatSliceT = {

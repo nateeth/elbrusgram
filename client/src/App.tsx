@@ -56,8 +56,8 @@ function App(): React.JSX.Element {
           element: user.status === UserStatusEnum.logged ? <PaintPage /> : <LoginPage />,
         },
         {
-          path: '/profile',
-          element: <ProfilePage />,
+          path: '/profile/:id',
+          element: user.status === UserStatusEnum.logged ? <ProfilePage /> : <LoginPage />,
         },
         {
           path: '/group/:groupId',
