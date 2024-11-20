@@ -6,6 +6,7 @@ export const messageSchema = z.object({
   authorid: z.number(),
   groupid: z.number(),
   authorName: z.string(),
+  isEdited: z.boolean(),
 });
 
 export type MessageT = z.infer<typeof messageSchema>;
