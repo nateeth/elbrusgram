@@ -11,7 +11,7 @@ const initialState: ChatSliceT = {
   users: [],
   messages: [],
   draw: '',
-  groups: []
+  groups: [],
 };
 
 export const chatSlice = createSlice({
@@ -24,6 +24,12 @@ export const chatSlice = createSlice({
     addMessage: (state, action: PayloadAction<MessageT>) => {
       state.messages.push(action.payload);
     },
+    editMessage: (state, action) => {
+      const { messageId, text } = action.payload;
+      state.messages = state.messages.map((message) =>
+        message.id === messageId ? { ...message, text } : message,
+      );
+    },
     setMessages: (state, action: PayloadAction<MessageT[]>) => {
       state.messages = action.payload;
     },
@@ -35,10 +41,10 @@ export const chatSlice = createSlice({
     },
     addGroup: (state, action) => {
       state.groups.push(action.payload);
-    }
+    },
   },
 });
 
-export const { setUsers, addMessage, setDraw, addGroup } = chatSlice.actions;
+export const { setUsers, addMessage, editMessage, setDraw, addGroup } = chatSlice.actions;
 
 export default chatSlice.reducer;

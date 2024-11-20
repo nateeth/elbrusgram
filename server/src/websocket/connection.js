@@ -41,8 +41,6 @@ function connection(ws, request, user) {
     ws.send(JSON.stringify(action));
   });
 
-
-
   ws.on('message', async (data) => {
     try {
       const action = JSON.parse(data);
@@ -70,14 +68,46 @@ function connection(ws, request, user) {
             };
             userConnection.ws.send(JSON.stringify(newAction));
           });
-          break; 
+          break;
+        }
+
+        case 'EDIT_MESSAGE': {
+          const currentUser = await User.findByPk(user.id);
+          if (!currentUser) {
+            console.error('User not found');
+            return;
+          }
+
+          const messageToEdit = await Message.findByPk(payload.messageId);
+
+          if (!messageToEdit) {
+            console.error('Message not found');
+            return;
+          }
+
+          if (messageToEdit.authorid !== user.id) {
+            console.error('User is not the author of this message');
+            return;
+          }
+
+          messageToEdit.text = payload.text;
+
+          await messageToEdit.save();
+          Object.values(activeConnections).forEach((userConnection) => {
+            const newAction = {
+              type: 'chat/editMessage',
+              payload: messageToEdit,
+            };
+            userConnection.ws.send(JSON.stringify(newAction));
+          });
+          break;
         }
 
         case 'NEW_DRAW': {
           Object.values(activeConnections).forEach((userConnection) => {
             const newAction = {
               type: 'chat/setDraw',
-              payload: payload,
+              payload,
             };
             userConnection.ws.send(JSON.stringify(newAction));
           });
@@ -93,20 +123,20 @@ function connection(ws, request, user) {
               chatflag: payload.chatflag,
             });
 
-            const userIds = payload.users; 
+            const userIds = payload.users;
 
-            
-            await Promise.all(userIds.map(userId => 
-              UserGroup.create({
-                userid: userId,
-                groupid: newGroup.id,
-              })
-            ));
+            await Promise.all(
+              userIds.map((userId) =>
+                UserGroup.create({
+                  userid: userId,
+                  groupid: newGroup.id,
+                }),
+              ),
+            );
             const groupAction = {
               type: 'chat/addGroup',
               payload: newGroup,
             };
-
 
             Object.values(activeConnections).forEach((userConnection) => {
               userConnection.ws.send(JSON.stringify(groupAction));
@@ -118,7 +148,6 @@ function connection(ws, request, user) {
           }
           break;
         }
-
 
         default:
           console.warn('Unknown action type:', type);
