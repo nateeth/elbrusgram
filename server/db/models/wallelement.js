@@ -11,15 +11,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate({User}) {
       this.belongsTo(User, { foreignKey: 'userid', as: 'Userwallprofile' });
-      this.belongsToMany(User, {through: 'Wallauthor', foreignKey: 'wallelementid', as : 'Wallelementauthor'});
+      this.belongsTo(User, { foreignKey: 'authorid', as: 'Userwallauthor' });
+
     }
   }
-  Wallelement.init({
-    userid: DataTypes.INTEGER,
-    wallreaction: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Wallelement',
-  });
+  Wallelement.init(
+    {
+      userid: DataTypes.INTEGER,
+      authorid: DataTypes.INTEGER,
+      wallreaction: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: 'Wallelement',
+    },
+  );
   return Wallelement;
 };

@@ -13,6 +13,7 @@ module.exports = {
           email: 'alex@example.com',
           hashpass: hashSync('123', 10),
           nick: 'nickalex',
+          avatar: 'Sasuke.jpeg',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -21,6 +22,7 @@ module.exports = {
           email: 'charlie@example.com',
           hashpass: hashSync('123', 10),
           nick: 'nickchar',
+          avatar: 'Naruto.jpg',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -114,12 +116,14 @@ module.exports = {
         [
           {
             userid: 2,
+            authorid: 1,
             wallreaction: 'Давно не виделись',
             createdAt: new Date(),
             updatedAt: new Date(),
           },
           {
             userid: 1,
+            authorid: 2,
             wallreaction: 'Привет медвед',
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -127,26 +131,6 @@ module.exports = {
         ],
         {},
       );
-
-      await queryInterface.bulkInsert(
-        'Wallauthors',
-        [
-          {
-            wallelementid: 1,
-            userid: 2,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            wallelementid: 2,
-            userid: 1,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        ],
-        {},
-      );
-
   },
 
   async down (queryInterface, Sequelize) {

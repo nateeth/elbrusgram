@@ -50,7 +50,7 @@ export default function NavBar(): JSX.Element {
                 >
                   Рисовалка
                 </Button>
-                <Button color="primary" onClick={() => navigate('/profile')}>
+                <Button color="primary" onClick={() => navigate(`/profile/${user.id}`)}>
                   Профиль
                 </Button>
                 <Button color="primary" onClick={handleLogout}>

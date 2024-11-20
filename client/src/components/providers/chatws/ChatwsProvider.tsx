@@ -78,6 +78,18 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     socket.send(JSON.stringify(action));
   }, []);
 
+  const sendGroupData = useCallback((groupData) => {
+    const socket = socketRef.current;
+    if (!socket) return;
+  
+    const action = {
+      type: 'NEW_GROUP',
+      payload: groupData,
+    };
+  
+    socket.send(JSON.stringify(action));
+  }, []);
+
   const sendDataDraw = useCallback((text: string) => {
     const socket = socketRef.current;
     if (!socket) return;
@@ -88,7 +100,7 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     socket.send(JSON.stringify(action));
   }, []);
 
-  const contextData = useMemo(() => ({ sendData, sendDataDraw, editMessage }), [sendData, sendDataDraw, editMessage]);
+  const contextData = useMemo(() => ({ sendData, sendDataDraw, editMessage, sendGroupData }), [sendData, sendDataDraw, editMessage]);
 
   return <ChatwsContext.Provider value={contextData}>{children}</ChatwsContext.Provider>;
 }
