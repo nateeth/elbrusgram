@@ -1,11 +1,27 @@
 import { createContext } from 'react';
 
-const ChatwsContext = createContext<{
-  sendData: (text: string, groupId: number) => void;
-  editMessage: (messageId: number, newText: string, groupId: number) => void;
-}>({
+
+
+export type groupDataType = {
+  title: string,
+          description: string;
+          chatflag: boolean;
+          ownerid: number | null;
+          users: string[];
+}
+type ChatwsContextType = {
+  sendData: (text: string, groupId: string | undefined) => void;
+  sendDataDraw: (text: string) => void;
+  sendGroupData(groupData: groupDataType): void;
+    editMessage: (messageId: number, newText: string, groupId: number) => void;
+}
+
+const ChatwsContext = createContext<ChatwsContextType>({
   sendData: () => {},
-  editMessage: () => {},
+  sendDataDraw: () => {},
+  sendGroupData: () => {},
+    editMessage: () => {},
+
 });
 
 export default ChatwsContext;

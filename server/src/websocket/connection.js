@@ -1,3 +1,4 @@
+
 const { Message, User, Group, UserGroup } = require('../../db/models');
 
 const activeConnections = {};
@@ -32,6 +33,15 @@ function connection(ws, request, user) {
     };
     ws.send(JSON.stringify(action));
   });
+
+  Group.findAll().then((groups) => {
+    const action = {
+      type: 'chat/setGroups',
+      payload: groups,
+    };
+    ws.send(JSON.stringify(action));
+  });
+
 
   ws.on('message', async (data) => {
     try {
@@ -108,14 +118,14 @@ function connection(ws, request, user) {
 
         case 'NEW_GROUP': {
           try {
-            console.log('Payload received on server:', payload);
+
             const newGroup = await Group.create({
               title: payload.title,
               ownerid: user.id,
               description: payload.description,
               chatflag: payload.chatflag,
             });
-            console.log('New group created:', newGroup);
+
 
             if (!newGroup || !newGroup.id) {
               throw new Error('Failed to create a new group');

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import ChatwsContext from './chatwsContext';
+import ChatwsContext, { groupDataType } from './chatwsContext';
 import { useAppDispatch, useAppSelector } from '../../providers/hooks';
 import { UserStatusEnum } from '../../../schemas/authSchema';
 
@@ -50,7 +50,7 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     };
   }, [status, dispatch]);
 
-  const sendData = useCallback((text: string, groupId: number) => {
+  const sendData = useCallback((text: string, groupId: string | undefined) => {
     const socket = socketRef.current;
     if (!socket) return;
     const action = {
@@ -77,7 +77,7 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     socket.send(JSON.stringify(action));
   }, []);
 
-  const sendGroupData = useCallback((groupData) => {
+  const sendGroupData = useCallback((groupData: groupDataType) => {
     const socket = socketRef.current;
     if (!socket) return;
   

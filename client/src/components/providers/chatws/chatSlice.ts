@@ -1,11 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { UserDataType } from '../../../schemas/authSchema';
 import { MessageT } from '../../../schemas/messageSchema';
+import { groupDataType } from './chatwsContext';
 
 export type ChatSliceT = {
   users: UserDataType[];
   messages: MessageT[];
   draw: string;
+  groups: groupDataType[]
+
 };
 
 const initialState: ChatSliceT = {
