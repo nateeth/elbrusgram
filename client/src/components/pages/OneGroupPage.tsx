@@ -17,9 +17,8 @@ import ChatBar from '../ui/ChatBar';
 
 export default function OneGroupPage(): JSX.Element {
   const messages = useAppSelector((store) => store.chat.messages);
+  const user = useAppSelector((state) => state.auth.user);
   const { sendData, editMessage } = useContext(ChatwsContext);
-  // const { user } = useContext(UserContext); 
-
   const { groupId } = useParams();
   const groupmessages = messages.filter((message) => message.groupid === Number(groupId));
 
@@ -126,7 +125,9 @@ export default function OneGroupPage(): JSX.Element {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
               const text = formData.get('text');
-              if (!text || typeof text !== 'string') return console.log('Error');
+              if (!text || typeof text !== 'string' || !text.trim()) {
+                return console.log('Сообщение не может быть пустым');
+              }
               sendData(text, groupId);
               return e.currentTarget.reset();
             }}
@@ -157,11 +158,11 @@ export default function OneGroupPage(): JSX.Element {
         <MenuItem onClick={handleDelete} sx={{ color: 'red', fontSize: '0.875rem' }}>
           Удалить
         </MenuItem>
-        {/* {user.id === message.authorId && ( */}
+        {user?.id === messages.find((message) => message.id === currentMessageId)?.authorid && (
           <MenuItem onClick={handleEdit} sx={{ fontSize: '0.875rem' }}>
             Редактировать
           </MenuItem>
-        {/* )} */}
+        )}
         <MenuItem onClick={handleForward} sx={{ fontSize: '0.875rem' }}>
           Переслать
         </MenuItem>

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import ChatwsContext from './chatwsContext';
 import { useAppDispatch, useAppSelector } from '../../providers/hooks';
 import { UserStatusEnum } from '../../../schemas/authSchema';
-import { group } from 'console';
 
 type ChatwsProviderProps = {
   children: JSX.Element;
