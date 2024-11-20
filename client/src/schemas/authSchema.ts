@@ -11,7 +11,7 @@ export const userDataSchema = z.object({
   name: z.string(),
   nick: z.string(),
   email: z.string(),
-  avatar: z.string(),
+  avatar: z.string().optional().nullable(),
 });
 
 export type UserDataType = z.infer<typeof userDataSchema>;
@@ -46,6 +46,7 @@ export const SignupFormSchema = z.object({
   nick: z.string(),
   email: z.string().email(),
   password: z.string(),
+  avatar: z.string().optional().nullable()
 });
 
 export type LoginForm = z.infer<typeof LoginFormSchema>;
