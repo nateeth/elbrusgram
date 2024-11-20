@@ -10,7 +10,7 @@ import {
   IconButton,
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useAppSelector } from '../providers/hooks';
 import ChatwsContext from '../providers/chatws/chatwsContext';
 import ChatBar from '../ui/ChatBar';
@@ -85,7 +85,7 @@ export default function OneGroupPage(): JSX.Element {
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
                     <Typography variant="body2" fontWeight="bold" sx={{ marginRight: 1 }}>
-                      {message.authorName}:
+                      <Link to={`/profile/${message.authorid}`}>{message.authorName}</Link>
                     </Typography>
                     {isEditing === message.id ? (
                       <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
