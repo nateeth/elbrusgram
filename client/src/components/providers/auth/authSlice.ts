@@ -8,6 +8,7 @@ const initialState: AuthType = {
   user: { 
     status: UserStatusEnum.pending,
     id: null,
+    name: '',
   },
 };
 
@@ -39,7 +40,7 @@ export const authSlice = createSlice({
       })
       .addCase(logoutThunk.fulfilled, (state) => {
         state.accessToken = '';
-        state.user = { status: UserStatusEnum.guest, id: null };
+        state.user = { status: UserStatusEnum.guest, id: null, name: '' };
         console.log(state.user);
       });
   },

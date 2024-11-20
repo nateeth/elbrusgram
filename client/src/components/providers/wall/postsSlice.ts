@@ -13,12 +13,12 @@ const postsSlice = createSlice({
 
     addPost: (state, action: PayloadAction<WallPostsT>) => {
       const newPost: WallPostsT = {
-        id: state?.posts.length + 1,
+        id: Math.round(Math.random() * 1e9),
         userid: action.payload.userid,
         wallreaction: action.payload.wallreaction,
         authorid: action.payload.authorid,
         Userwallauthor: action.payload.Userwallauthor,
-        Userwallprofile: {userid: action.payload.userid},
+        Userwallprofile: { userid: action.payload.userid },
       };
       state.posts?.unshift(newPost);
       axiosInstance.post('/wallelements', newPost);
