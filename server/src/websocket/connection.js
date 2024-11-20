@@ -2,6 +2,22 @@ const { Message, User, Group, UserGroup } = require('../../db/models');
 
 const activeConnections = {};
 
+const sendMessages = async (ws) => {
+  try {
+    const messages = await Message.findAll({
+      order: [['createdAt', 'ASC']],
+    });
+    const action = {
+      type: 'chat/setMessages',
+      payload: messages,
+    };
+    ws.send(JSON.stringify(action));
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+  }
+};
+
+
 function connection(ws, request, user) {
   ws.on('error', console.error);
 
@@ -93,15 +109,42 @@ function connection(ws, request, user) {
           }
 
           messageToEdit.text = payload.text;
-          messageToEdit.isEdited = true; 
+          messageToEdit.isEdited = true;
 
           await messageToEdit.save();
           Object.values(activeConnections).forEach((userConnection) => {
-            const newAction = {
+            const newEditAction = {
               type: 'chat/editMessage',
               payload: messageToEdit,
             };
-            userConnection.ws.send(JSON.stringify(newAction));
+            userConnection.ws.send(JSON.stringify(newEditAction));
+          });
+
+          sendMessages(ws);
+          break;
+        }
+
+        case 'DELETE_MESSAGE': {
+          const messageToDelete = await Message.findByPk(payload.messageId);
+
+          if (!messageToDelete) {
+            console.error('Message not found');
+            return;
+          }
+
+          if (messageToDelete.authorid !== user.id) {
+            console.error('User is not the author of this message');
+            return;
+          }
+
+          await messageToDelete.destroy();
+
+          Object.values(activeConnections).forEach((userConnection) => {
+            const deleteAction = {
+              type: 'chat/deleteMessage',
+              payload: { messageId: payload.messageId },
+            };
+            userConnection.ws.send(JSON.stringify(deleteAction));
           });
 
           Message.findAll({
@@ -113,6 +156,7 @@ function connection(ws, request, user) {
             };
             ws.send(JSON.stringify(editedAction));
           });
+
           break;
         }
 

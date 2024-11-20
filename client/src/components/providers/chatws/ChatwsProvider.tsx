@@ -78,15 +78,28 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     socket.send(JSON.stringify(action));
   }, []);
 
+  const deleteMessage = useCallback((messageId: number, groupId: number) => {
+    const socket = socketRef.current;
+    if (!socket) return;
+    const action = {
+      type: 'DELETE_MESSAGE',
+      payload: {
+        messageId,
+        groupid: groupId,
+      },
+    };
+    socket.send(JSON.stringify(action));
+  }, []);
+
   const sendGroupData = useCallback((groupData: groupDataType) => {
     const socket = socketRef.current;
     if (!socket) return;
-  
+
     const action = {
       type: 'NEW_GROUP',
       payload: groupData,
     };
-  
+
     socket.send(JSON.stringify(action));
   }, []);
 
@@ -100,7 +113,10 @@ export default function ChatwsProvider({ children }: ChatwsProviderProps): JSX.E
     socket.send(JSON.stringify(action));
   }, []);
 
-  const contextData = useMemo(() => ({ sendData, sendDataDraw, editMessage, sendGroupData }), [sendData, sendDataDraw, editMessage]);
+  const contextData = useMemo(
+    () => ({ sendData, sendDataDraw, editMessage, sendGroupData, deleteMessage }),
+    [sendData, sendDataDraw, editMessage, deleteMessage],
+  );
 
   return <ChatwsContext.Provider value={contextData}>{children}</ChatwsContext.Provider>;
 }
