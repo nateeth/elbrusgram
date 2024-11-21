@@ -2,6 +2,11 @@
 
 const { hashSync } = require('bcrypt');
 const user = require('../models/user');
+// const { encryptMessage } = require('../../src/utils/crypto-utils');
+// const fs = require('fs');
+// const path = require('path');
+// const publicKey1 = fs.readFileSync(path.resolve(__dirname, '../../src/utils/keys/1/public.pem'), 'utf8');
+// const publicKey2 = fs.readFileSync(path.resolve(__dirname, '../../src/utils/keys/2/public.pem'), 'utf8');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -50,30 +55,30 @@ module.exports = {
       ],
       {},
     );
-    await queryInterface.bulkInsert(
-      'Messages',
-      [
-        {
-          text: 'Privet medved!',
-          authorid: 1,
-          groupid: 1,
-          authorName: 'Alex',
-          isEdited: false,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          text: 'Privet sosed!',
-          authorid: 2,
-          groupid: 1,
-          authorName: 'Charlie',
-          isEdited: false,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ],
-      {},
-    );
+    // await queryInterface.bulkInsert(
+    //   'Messages',
+    //   [
+    //     {
+    //       text: encryptMessage('Privet medved!', publicKey1),
+    //       authorid: 1,
+    //       groupid: 1,
+    //       authorName: 'Alex',
+    //       isEdited: false,
+    //       createdAt: new Date(),
+    //       updatedAt: new Date(),
+    //     },
+    //     {
+    //       text: encryptMessage('Privet sosed!', publicKey2),
+    //       authorid: 2,
+    //       groupid: 1,
+    //       authorName: 'Charlie',
+    //       isEdited: false,
+    //       createdAt: new Date(),
+    //       updatedAt: new Date(),
+    //     },
+    //   ],
+    //   {},
+    // );
     await queryInterface.bulkInsert(
       'UserGroups',
       [
@@ -92,26 +97,26 @@ module.exports = {
       ],
       {},
     );
-    await queryInterface.bulkInsert(
-      'Reactions',
-      [
-        {
-          reaction: '🥳',
-          authorid: 1,
-          messageid: 1,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          reaction: '😉',
-          authorid: 2,
-          messageid: 2,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ],
-      {},
-    );
+    // await queryInterface.bulkInsert(
+    //   'Reactions',
+    //   [
+    //     {
+    //       reaction: '🥳',
+    //       authorid: 1,
+    //       messageid: 1,
+    //       createdAt: new Date(),
+    //       updatedAt: new Date(),
+    //     },
+    //     {
+    //       reaction: '😉',
+    //       authorid: 2,
+    //       messageid: 2,
+    //       createdAt: new Date(),
+    //       updatedAt: new Date(),
+    //     },
+    //   ],
+    //   {},
+    // );
     await queryInterface.bulkInsert(
       'Wallelements',
       [

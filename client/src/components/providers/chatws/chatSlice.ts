@@ -7,8 +7,7 @@ export type ChatSliceT = {
   users: UserDataType[];
   messages: MessageT[];
   draw: string;
-  groups: groupDataType[]
-
+  groups: groupDataType[];
 };
 
 const initialState: ChatSliceT = {
