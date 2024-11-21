@@ -9,7 +9,9 @@ export type WallPostsState = {
 export type WallPostsT = {
   id?: number;
   userid: number | undefined;
-  wallreaction: string | undefined;
+  wallreaction: string | null;
+  wallreactionimg: FormData | null | undefined;
+  wallreactionimgcurrent?: string | null;
   authorid?: number | null;
   Userwallauthor?: UserType | undefined;
   Userwallprofile?: { userid: number | undefined };

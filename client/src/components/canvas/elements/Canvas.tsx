@@ -17,13 +17,12 @@ const CanvasPage = observer(() => {
   const draw = useAppSelector((store) => store.chat.draw);
 
   useEffect(() => {
-    canvasState.setCanvas(canvasRef.current);
-    console.log(canvasRef.current);
+    if (canvasRef.current) {canvasState.setCanvas(canvasRef.current);
     toolState.setTool(new Brush(canvasRef.current));
     toolState.setTool(new Rect(canvasRef.current));
     toolState.setTool(new Circle(canvasRef.current));
     toolState.setTool(new Eraser(canvasRef.current));
-    toolState.setTool(new Line(canvasRef.current));
+    toolState.setTool(new Line(canvasRef.current));}
   }, []);
 
   useEffect(() => {

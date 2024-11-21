@@ -16,12 +16,26 @@ const postsSlice = createSlice({
         id: Math.round(Math.random() * 1e9),
         userid: action.payload.userid,
         wallreaction: action.payload.wallreaction,
+        wallreactionimg: null,
         authorid: action.payload.authorid,
         Userwallauthor: action.payload.Userwallauthor,
         Userwallprofile: { userid: action.payload.userid },
       };
       state.posts?.unshift(newPost);
       axiosInstance.post('/wallelements', newPost);
+    },
+    addImagePost: (state, action: PayloadAction<WallPostsT>) => {
+      const newPost: WallPostsT = {
+        id: Math.round(Math.random() * 1e9),
+        userid: action.payload.userid,
+        wallreaction: action.payload.wallreaction,
+        wallreactionimg: null,
+        wallreactionimgcurrent: action.payload.wallreactionimgcurrent,
+        authorid: action.payload.authorid,
+        Userwallauthor: action.payload.Userwallauthor,
+        Userwallprofile: { userid: action.payload.userid },
+      };
+      state.posts?.unshift(newPost);
     },
     deletePost: (state, action: PayloadAction<number>) => {
       state.posts = state.posts?.filter((post) => post.id !== action.payload);
@@ -36,6 +50,6 @@ const postsSlice = createSlice({
   },
 });
 
-export const { addPost, deletePost } = postsSlice.actions;
+export const { addPost, deletePost, addImagePost } = postsSlice.actions;
 
 export default postsSlice.reducer;

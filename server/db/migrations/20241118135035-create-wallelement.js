@@ -30,6 +30,9 @@ module.exports = {
       wallreaction: {
         type: Sequelize.STRING,
       },
+      wallreactionimg: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

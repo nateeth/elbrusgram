@@ -20,7 +20,7 @@ function ToolBar(): JSX.Element {
       {const dataUrl = canvasState.canvas.toDataURL();
       const a = document.createElement('a');
       a.href = dataUrl;
-      a.download = 'img' + '.jpg';
+      a.download = Math.round(Math.random() * 1e9) + '.jpeg';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);}
