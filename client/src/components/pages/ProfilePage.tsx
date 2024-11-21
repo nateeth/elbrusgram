@@ -84,7 +84,7 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
       >
         <Box
           sx={{
-            width: 500,
+            width: 450,
             backgroundColor: 'white',
             padding: 2,
             borderRight: '1px solid #ddd',
@@ -112,7 +112,7 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
           ></Box>
           <Box
             sx={{
-              width: 300,
+              width: 234,
               height: 200,
               backgroundColor: 'white',
               padding: 2,
@@ -228,7 +228,7 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
               />
-              <Button onClick={() => setOpen(!open)} style={{ margin: '20px' }}>
+              <Button onClick={() => setOpen(!open)} style={{ margin: '5px' }}>
                 ✌️
               </Button>
               <Box
