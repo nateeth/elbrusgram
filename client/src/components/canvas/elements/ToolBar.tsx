@@ -26,7 +26,6 @@ function ToolBar(): JSX.Element {
       document.body.removeChild(a);}
   };
   
-
   return (
     <div className="toolbar" style={{ top: 100 }}>
       <Button
