@@ -112,6 +112,17 @@ export default function OneGroupPage(): JSX.Element {
     }
   };
 
+  const handlePlayTTS = () => {
+    if (currentMessageId !== null) {
+      const message = messages.find((msg) => msg.id === currentMessageId);
+      if (message && message.text) {
+        const utterance = new SpeechSynthesisUtterance(message.text);
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+    handleClose();
+  };
+
   if (isLoading) {
     return (
       <Box
@@ -235,8 +246,21 @@ export default function OneGroupPage(): JSX.Element {
                             ред.
                           </Typography>
                         )}
-                        <Typography variant="body1" sx={{ marginLeft: 2, wordWrap: 'break-word', maxWidth: '600px' }}>
-                          <CustomTTSComponent highlight > {message.text} </CustomTTSComponent>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            marginLeft: 2,
+                            wordWrap: 'break-word',
+                            maxWidth: '600px',
+                          }}
+                        >
+                          {message.text}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{ marginLeft: 2, wordWrap: 'break-word', maxWidth: '600px' }}
+                        >
+                          <CustomTTSComponent highlight> {message.text} </CustomTTSComponent>
                         </Typography>
                       </Box>
                     )}
@@ -322,6 +346,9 @@ export default function OneGroupPage(): JSX.Element {
             </MenuItem>
           </>
         )}
+        <MenuItem onClick={handlePlayTTS} sx={{ fontSize: '0.875rem' }}>
+          Озвучить
+        </MenuItem>
         <MenuItem onClick={handleForward} sx={{ fontSize: '0.875rem' }}>
           Переслать
         </MenuItem>
