@@ -101,14 +101,14 @@ import { getAllGroups } from '../providers/group/groupThunk';
         }}
       >
         <Box >
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>   
-          <Typography variant="h6" gutterBottom>
-            Чаты
-          </Typography>
-          <Button onClick={handleOpen} sx={{}}>
-            <AddCircleOutlineIcon />
-          </Button>
-            </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>   
+              <Typography variant="h6" gutterBottom>
+                Чаты
+              </Typography>
+              <Button onClick={handleOpen} sx={{}}>
+                <AddCircleOutlineIcon />
+              </Button>
+          </Box>
           <Modal
             open={open}
             onClose={handleClose}

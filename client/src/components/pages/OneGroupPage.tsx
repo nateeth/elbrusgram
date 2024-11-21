@@ -15,6 +15,9 @@ import { Link, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../providers/hooks';
 import ChatwsContext from '../providers/chatws/chatwsContext';
 import ChatBar from '../ui/ChatBar';
+
+import { CustomTTSComponent } from '../../services/ttsService';
+import EmojiPicker from 'emoji-picker-react';
 import { MessageT } from '../../schemas/messageSchema';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
@@ -30,13 +33,18 @@ export default function OneGroupPage(): JSX.Element {
 
   const { groupId } = useParams();
 
-
+  const [input, setInput] = useState('');
   const groupmessages = messages.filter((message) => message.groupid === Number(groupId));
   const userGroups = useAppSelector((store) => store.groups.groups);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentMessageId, setCurrentMessageId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState<number | null>(null);
   const [editingText, setEditingText] = useState<string>('');
+
+  const [open, setOpen] = useState(true);
+  const handleEmoji = (emoji: any): void => {
+    setInput((input) => input + emoji.emoji);
+  };
 
   const [editedMessages, setEditedMessages] = useState<number[]>([]);
   const [openInfo, setOpenInfo] = useState(false);
@@ -57,7 +65,6 @@ export default function OneGroupPage(): JSX.Element {
   const handleCloseInfo = () => {
     setOpenInfo(false);
   };
-
 
   const handleClick = (event: React.MouseEvent<HTMLElement>, messageId: number, text: string) => {
     setAnchorEl(event.currentTarget);
@@ -167,6 +174,7 @@ export default function OneGroupPage(): JSX.Element {
                           size="small"
                           sx={{ marginRight: 1 }}
                         />
+
                         <IconButton color="primary" onClick={handleSave}>
                           <CheckIcon />
                         </IconButton>
@@ -182,7 +190,7 @@ export default function OneGroupPage(): JSX.Element {
                           </Typography>
                         )}
                         <Typography variant="body1" sx={{ marginLeft: 2 }}>
-                          {message.text}
+                          <CustomTTSComponent highlight> {message.text} </CustomTTSComponent>
                         </Typography>
                       </Box>
                     )}
@@ -209,6 +217,7 @@ export default function OneGroupPage(): JSX.Element {
                 return console.log('Сообщение не может быть пустым');
               }
               sendData(text, groupId);
+              setInput('');
               return e.currentTarget.reset();
             }}
             sx={{
@@ -226,7 +235,28 @@ export default function OneGroupPage(): JSX.Element {
               variant="outlined"
               label="Напишите сообщение..."
               sx={{ marginRight: 2 }}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
             />
+            <Button onClick={() => setOpen(!open)} style={{ margin: '20px' }}>
+              ✌️
+            </Button>
+            <Box
+              display={open ? 'none' : 'block'}
+              sx={{
+                position: 'absolute',
+                top: '-250%',
+                left: '70%',
+                transform: 'translate(-50%, -50%)',
+                width: 400,
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <Button onClick={() => setOpen(!open)}>Скрыть</Button>
+              <EmojiPicker onEmojiClick={handleEmoji} />
+            </Box>
             <Button type="submit" variant="contained" color="primary" sx={{ height: '100%' }}>
               Отправить
             </Button>
