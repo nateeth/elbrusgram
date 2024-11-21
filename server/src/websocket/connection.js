@@ -51,13 +51,33 @@ function connection(ws, request, user) {
     ws.send(JSON.stringify(action));
   });
 
-  Group.findAll().then((groups) => {
-    const action = {
-      type: 'chat/setGroups',
-      payload: groups,
-    };
-    ws.send(JSON.stringify(action));
-  });
+  (async () => {
+    try {
+      const userId = user.id; 
+  
+      
+      const groups = await Group.findAll({
+        include: [
+          {
+            model: User,
+            as: 'GroupUser', 
+            where: { id: userId },
+            through: { attributes: [] }, // Исключаем лишние данные из таблицы-связки
+          },
+        ],
+      });
+  
+      // Отправляем группы в клиент
+      const action = {
+        type: 'chat/setGroups',
+        payload: groups,
+      };
+      ws.send(JSON.stringify(action));
+    } catch (error) {
+      console.error('Error fetching filtered groups:', error);
+    }
+  })();
+  
 
   ws.on('message', async (data) => {
     try {
@@ -215,14 +235,22 @@ function connection(ws, request, user) {
         case 'getGroups': {
           try {
             const groups = await Group.findAll({
+              order: [['id', 'DESC']],
               include: [
                 {
                   model: User,
-                  as: 'members',
-                  where: { id: user.id },
+                  as: 'Owner', 
+                  attributes: ['id', 'name', 'email', 'nick'], 
+                },
+                {
+                  model: User,
+                  as: 'GroupUser', 
+                  through: { attributes: [] }, 
+                  attributes: ['id', 'name', 'email', 'nick'],
                 },
               ],
             });
+            console.log(JSON.stringify(groups, null, 2));
 
             const groupsAction = {
               type: 'groupsData',

@@ -1,8 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { getAllGroups } from "./groupThunk"
+import { UserDataType } from "../../../schemas/authSchema"
+
+
+export type groupDataType = {
+    id: number,
+    title: string,
+    description: string,
+    ownerid: number,
+    chatflag: boolean,
+    Owner: {
+      id: number,
+      name: string,
+      email: string,
+      nick: string
+    },
+    GroupUser: UserDataType[] | []
+}
 
 type groupSliceType = {
-    groups: [],
+    groups: groupDataType[],
     error: null | string
 }
 const initialState: groupSliceType = {
