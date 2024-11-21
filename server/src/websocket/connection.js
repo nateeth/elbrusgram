@@ -62,12 +62,11 @@ function connection(ws, request, user) {
             model: User,
             as: 'GroupUser', 
             where: { id: userId },
-            through: { attributes: [] }, // Исключаем лишние данные из таблицы-связки
+            through: { attributes: [] }, 
           },
         ],
       });
   
-      // Отправляем группы в клиент
       const action = {
         type: 'chat/setGroups',
         payload: groups,

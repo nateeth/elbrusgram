@@ -15,11 +15,9 @@ import { Link, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../providers/hooks';
 import ChatwsContext from '../providers/chatws/chatwsContext';
 import ChatBar from '../ui/ChatBar';
-
 import { CustomTTSComponent } from '../../services/ttsService';
 import EmojiPicker from 'emoji-picker-react';
 import { MessageT } from '../../schemas/messageSchema';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import { getAllGroups } from '../providers/group/groupThunk';
 import InfoIcon from '@mui/icons-material/Info';
@@ -39,7 +37,7 @@ export default function OneGroupPage(): JSX.Element {
   const [currentMessageId, setCurrentMessageId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState<number | null>(null);
   const [editingText, setEditingText] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [open, setOpen] = useState(true);
 
@@ -53,13 +51,22 @@ export default function OneGroupPage(): JSX.Element {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!currentGroup[0]?.title) {
+    const fetchGroups = async () => {
+      console.log('Запрос на загрузку групп...');
       setIsLoading(true);
-      void dispatch(getAllGroups()).then(() => setIsLoading(false));
-    } else {
-      setIsLoading(false);
-    }
-  }, [dispatch, currentGroup]);
+
+      try {
+        await dispatch(getAllGroups());
+      } catch (error) {
+        console.error('Ошибка при загрузке групп:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchGroups();
+  }, [dispatch, groupId, userGroups.length]);
+
   const handleOpenInfo = async () => {
     await dispatch(getAllGroups());
 
