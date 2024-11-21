@@ -11,31 +11,39 @@ import {
     FormControlLabel,
   } from '@mui/material';
   import React, { useContext, useEffect, useState } from 'react';
-  import { useNavigate } from 'react-router-dom';
+  import { useNavigate, useParams } from 'react-router-dom';
   import { useAppDispatch, useAppSelector } from '../providers/hooks';
   import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
+
 import { getAllUsers } from '../providers/users/userThunk';
 import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext';
+import { getAllGroups } from '../providers/group/groupThunk';
 
   
 
 
   export default function ChatBar(): JSX.Element {
     const [open, setOpen] = useState(false);
+
     const [groupTitle, setGroupTitle] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
+    const [selected, setSelected] = useState('');
     const groups = useAppSelector((store) => store.chat.groups);
+    const userGroups = useAppSelector((store) => store.groups.groups);
     const users = useAppSelector((store) => store.users.users); 
     const user = useAppSelector((state) => state.auth.user);
     const [selectedUsers, setSelectedUsers] = useState<string[]>([])
     const { sendGroupData } = useContext(ChatwsContext); 
+
+
     
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
       void dispatch(getAllUsers());
+      void dispatch(getAllGroups());
     }, [dispatch]);
   
     const handleOpen = () => setOpen(true);
@@ -45,6 +53,8 @@ import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext'
       setGroupDescription('');
       setSelectedUsers([]); 
     }
+
+
   
   
     const handleUserChange = (userId: string) => {
@@ -70,6 +80,13 @@ import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext'
     
         handleClose();
     };
+
+    const handleSelect = (groupId: string) => {
+      setSelected(groupId);
+      navigate(`/group/${groupId}`)
+    }
+
+
   
     return (
       <Box
@@ -84,14 +101,14 @@ import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext'
         }}
       >
         <Box >
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>   
-          <Typography variant="h6" gutterBottom>
-            Чаты
-          </Typography>
-          <Button onClick={handleOpen} sx={{}}>
-            <AddCircleOutlineIcon />
-          </Button>
-            </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>   
+              <Typography variant="h6" gutterBottom>
+                Чаты
+              </Typography>
+              <Button onClick={handleOpen} sx={{}}>
+                <AddCircleOutlineIcon />
+              </Button>
+          </Box>
           <Modal
             open={open}
             onClose={handleClose}
@@ -154,17 +171,27 @@ import ChatwsContext, { groupDataType } from '../providers/chatws/chatwsContext'
           </Modal>
         </Box>
         <List sx={{ padding: 0 }}>
-          {groups.map((group) => {
-            const cropTitle = group.title.length > 20 ? group.title.slice(0, 20) + '...' : group.title;
-            return (
-                
-                <ListItem key={group.id}>
-                   
-                  <ListItemText primary={cropTitle} onClick={() => navigate(`/group/${group.id}`)} />
-                </ListItem>
-            )
-        })}
-        </List>
+  {groups.map((group: groupDataType) => {
+    if(!group.id) return null;
+    const cropTitle = group.title.length > 20 ? group.title.slice(0, 20) + '...' : group.title;
+    return (
+      <ListItem
+        key={group.id?.toString()}
+        sx={{
+          backgroundColor: group.id === selected ? 'lightblue' : 'white',
+        }}
+        onClick={() => handleSelect(group.id!)} 
+      >
+        <ListItemText primary={cropTitle} />
+       
+      
+      </ListItem>
+
+      
+    );
+})}
+
+</List>
       </Box>
     );
   }
