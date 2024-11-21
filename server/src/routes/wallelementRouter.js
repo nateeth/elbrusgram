@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { User, Group, Message, UserGroup, Reaction, Wallelement, Wallauthor } = require('../../db/models');
+const upload = require('../middlewares/upload');
 const wallelementRouter = Router();
 
 wallelementRouter
@@ -24,7 +25,8 @@ wallelementRouter
     const { userid, authorid, wallreaction } = req.body;
     const newPost = await Wallelement.create({
       userid: userid, 
-      wallreaction: wallreaction, 
+      wallreaction: wallreaction,
+      wallreactionimg: null, 
       authorid: authorid});
     res.json(newPost);
   } catch (error) {
@@ -60,5 +62,29 @@ wallelementRouter
     console.log(error)
   }
 });
+
+wallelementRouter
+  .route('/:userid/:authorid/images')
+  .post(upload.single('img'), async (req, res) => {
+    try {
+      if (req.file) {
+        const newFilename = req.file ? req.file.filename : oldUser.avatar;
+        // await removeImage(oldUser.avatar); // раскомментируй, чтобы картинки удалялись
+        const newPost = await Wallelement.create({
+          userid: req.params.userid,
+          wallreaction: '',
+          wallreactionimg: newFilename,
+          authorid: req.params.authorid,
+        });
+        res.status(200).json(newPost);
+      }
+    } catch (error) {
+      console.log(error);
+      res
+        .status(500)
+        .json({ text: 'Ошибка добавления изображения', message: error.message });
+    }
+  });
+
 
 module.exports = wallelementRouter;

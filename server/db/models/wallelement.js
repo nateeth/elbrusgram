@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       userid: DataTypes.INTEGER,
       authorid: DataTypes.INTEGER,
       wallreaction: DataTypes.STRING,
+      wallreactionimg: DataTypes.STRING,
     },
     {
       sequelize,

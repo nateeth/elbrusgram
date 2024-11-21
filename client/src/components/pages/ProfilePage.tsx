@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '../providers/hooks';
 import { useEffect, useState } from 'react';
 import { loadWallPostsThunk } from '../providers/wall/postsThunk';
 import { useParams } from 'react-router-dom';
-import { addPost, deletePost } from '../providers/wall/postsSlice';
+import { addImagePost, addPost, deletePost } from '../providers/wall/postsSlice';
 import axiosInstance from '../../services/axiosInstance';
 import EmojiPicker from 'emoji-picker-react';
 
@@ -22,6 +22,7 @@ const ProfilePage = () => {
   const user = useAppSelector((state) => state.auth.user);
   const users = useAppSelector((state) => state.users)
   const userpage = users.users.find((elem)=> elem.id === Number(params.id));
+
   //emoji handling
   const [open, setOpen] = useState(true);
   const [input, setInput] = useState('');
@@ -45,6 +46,39 @@ const file2Base64 = (file: File): Promise<string> => {
   });
 };
 
+const addPicture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  e.preventDefault();
+  if (e.target.files === null) return;
+  if (e.target.files.length === 0) return;
+  const file = e.target.files[0];
+  const formData = new FormData();
+  formData.append('img', file);
+  const image = await file2Base64(file)
+  try {
+    dispatch(
+      addImagePost({
+        authorid: user.id,
+        userid: Number(params.id),
+        wallreaction: null,
+        wallreactionimg: null,
+        wallreactionimgcurrent: image,
+        Userwallauthor: user,
+      }),
+    );
+    axiosInstance.post(
+      `/wallelements/${Number(params.id)}/${user.id}/images`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+  } catch (error) {
+    console.error('Error adding picture:', error);
+  }
+};
+
 const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
   e.preventDefault();
   if (user.id !== Number(params.id)) return;
@@ -53,17 +87,14 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files[0];
   const formData = new FormData();
   formData.append('img', file); 
-  if (file) {
-      file2Base64(file).then((base64) => {
-        setUploaded(base64);
-      })};
+  const image = await file2Base64(file);
+  setUploaded(image);
   try {
     await axiosInstance.patch(`/users/${user.id}/images`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-    alert('Аватар успешно обновлен');
   } catch (error) {
     console.error('Error uploading image:', error);
   }
@@ -100,7 +131,7 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
               height: 200,
               maxHeight: { xs: 233, md: 167 },
               maxWidth: { xs: 350, md: 250 },
-              backgroundColor: 'gray',
+              // backgroundColor: 'gray',
               padding: 2,
               borderRight: '1px solid #ddd',
               //   overflowY: 'auto',
@@ -203,10 +234,12 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
                       authorid: user.id,
                       userid: Number(params.id),
                       wallreaction: text,
+                      wallreactionimg: null,
                       Userwallauthor: user,
                     }),
                   );
                 }
+                setInput('');
                 return e.currentTarget.reset();
               }}
               //   key={message.id}
@@ -250,6 +283,23 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
               <Button type="submit" variant="contained" color="primary" sx={{ height: '100%' }}>
                 Отправить
               </Button>
+              <Button
+                style={{ margin: '5px' }}
+                variant="contained"
+                color="primary"
+                sx={{ height: '100%' }}
+                component="label"
+              >
+                Изображение
+                <input
+                  accept="image/png,image/jpeg,image/gif"
+                  type="file"
+                  id="file-edit"
+                  onChange={addPicture}
+                  name="img"
+                  hidden
+                />
+              </Button>
             </Box>
             <Box sx={{ marginBottom: 1 }}>
               {posts?.map((post) => (
@@ -257,9 +307,31 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
                   <Typography variant="body2" fontWeight="bold">
                     Автор: {post?.Userwallauthor?.name}
                   </Typography>
-                  <Typography variant="body1" sx={{ marginLeft: 2 }}>
-                    {post.wallreaction}
-                  </Typography>
+                  {post.wallreaction !== '' && post.wallreaction !== null ? (
+                    <Typography variant="body1" sx={{ marginLeft: 2 }}>
+                      {post.wallreaction}
+                    </Typography>
+                  ) : (
+                    <Box
+                      component="img"
+                      sx={{
+                        maxHeight: { xs: 400, md: 300 },
+                        maxWidth: { xs: 600, md: 600 },
+                        padding: 2,
+                        //   overflowY: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                      src={
+                        post.wallreactionimg !== null
+                          ? `http://localhost:3000/img/${post.wallreactionimg}`
+                          : post.wallreactionimgcurrent !== null
+                            ? post.wallreactionimgcurrent
+                            : undefined
+                      }
+                      alt="img"
+                    ></Box>
+                  )}
                   <Button
                     onClick={() => {
                       if (post.id !== undefined) dispatch(deletePost(post.id));
