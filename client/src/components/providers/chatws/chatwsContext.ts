@@ -1,6 +1,7 @@
 import { createContext } from 'react';
 
 export type groupDataType = {
+  id?: string ;
   title: string;
   description: string;
   chatflag: boolean;
