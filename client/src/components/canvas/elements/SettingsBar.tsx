@@ -1,20 +1,19 @@
 import './ToolBar.scss';
 import './Canvas.scss';
-import { Input } from '@mui/material';
+import { Input, Typography } from '@mui/material';
 import toolState from '../store/toolState';
 
 function SettingsBar(): JSX.Element {
   return (
     <div className="setting-bar" style={{ top: 140 }}>
-      <label htmlFor="line-width">Толщина линии</label>
+      <Typography>Толщина фигуры:</Typography>
       <Input
         onChange={(e) => toolState.setLineWidth(Number(e.target.value))}
-        style={{ margin: '0 10px' }}
-        id="line-width"
+        style={{ margin: '0 10px', width: '40px' }}
         type="number"
-        defaultValue={1}
+        defaultValue={20}
       />
-      <label htmlFor="stroke-color">Цвет обводки</label>
+      <Typography>Цвет границ:</Typography>
       <Input
         onChange={(e) => toolState.setStrokeColor(e.target.value)}
         className="toolbar-button"

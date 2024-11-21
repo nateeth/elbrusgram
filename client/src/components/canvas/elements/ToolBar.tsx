@@ -1,6 +1,6 @@
 import './ToolBar.scss';
 import './Canvas.scss';
-import { Button, Input } from '@mui/material';
+import { Button, Input, Typography } from '@mui/material';
 import canvasState from '../store/canvasState';
 import toolState from '../store/toolState';
 import Brush from '../tools/Brush';
@@ -13,17 +13,17 @@ function ToolBar(): JSX.Element {
   const changeColor = (e: React.ChangeEvent<HTMLInputElement>) => {
     toolState.setStrokeColor(e.target.value);
     toolState.setFillColor(e.target.value);
-
   }
   
   const download = () => {
-    const dataUrl = canvasState.canvas.toDataURL();
-    const a = document.createElement('a');
-    a.href = dataUrl;
-    a.download = 'img' + '.jpg';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    if (canvasState.canvas) 
+      {const dataUrl = canvasState.canvas.toDataURL();
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'img' + '.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);}
   };
   
 
@@ -49,6 +49,7 @@ function ToolBar(): JSX.Element {
         className="toolbar-button line"
         onClick={() => toolState.setTool(new Line(canvasState.canvas))}
       ></Button>
+      <Typography>Цвет фигуры:</Typography>
       <Input
         onChange={changeColor}
         style={{ marginLeft: 10 }}
