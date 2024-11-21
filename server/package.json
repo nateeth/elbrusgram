@@ -22,6 +22,7 @@
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-ws": "^5.0.2",
@@ -35,6 +36,6 @@
     "sequelize": "^6.37.5",
     "sequelize-cli": "^6.6.2",
     "ws": "^8.18.0",
-    "wss": "^3.3.4"
+    "wss": "^0.0.2"
   }
 }

@@ -1,15 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Menu,
-  MenuItem,
-  Modal,
-  CircularProgress,
-} from '@mui/material';
+import { encryptMessage, decryptMessage, secretKey } from '../../utils/encrypting';
+import { Box, Typography, TextField, Button, Paper, Menu, MenuItem, Modal } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import { Link, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../providers/hooks';
@@ -46,7 +37,6 @@ export default function OneGroupPage(): JSX.Element {
     setInput((input) => input + emoji.emoji);
   };
 
-  const [editedMessages, setEditedMessages] = useState<number[]>([]);
   const [openInfo, setOpenInfo] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -56,9 +46,7 @@ export default function OneGroupPage(): JSX.Element {
   }, [dispatch]);
 
   const handleOpenInfo = async () => {
-
     await dispatch(getAllGroups());
-    
 
     setOpenInfo(true);
   };
@@ -75,6 +63,7 @@ export default function OneGroupPage(): JSX.Element {
   const handleClose = () => {
     setAnchorEl(null);
     setCurrentMessageId(null);
+    setIsEditing(null);
   };
 
   const handleDelete = () => {
@@ -155,55 +144,58 @@ export default function OneGroupPage(): JSX.Element {
             }}
           >
             <Box sx={{ marginBottom: 2 }}>
-              {groupmessages.map((message) => (
-                <Box
-                  key={message.id}
-                  sx={{ marginBottom: 1, display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-                    <Typography variant="body2" fontWeight="bold" sx={{ marginRight: 1 }}>
-                      <Link to={`/profile/${message.authorid}`}>{message.authorName}</Link>
-                    </Typography>
-                    {isEditing === message.id ? (
-                      <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-                        <TextField
-                          value={editingText}
-                          onChange={(e) => setEditingText(e.target.value)}
-                          fullWidth
-                          variant="outlined"
-                          size="small"
-                          sx={{ marginRight: 1 }}
-                        />
-
-                        <IconButton color="primary" onClick={handleSave}>
-                          <CheckIcon />
-                        </IconButton>
-                      </Box>
-                    ) : (
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        {message.isEdited && (
-                          <Typography
-                            variant="body2"
-                            sx={{ fontStyle: 'italic', color: 'grey', marginRight: 1 }}
-                          >
-                            ред.
-                          </Typography>
-                        )}
-                        <Typography variant="body1" sx={{ marginLeft: 2 }}>
-                          <CustomTTSComponent highlight> {message.text} </CustomTTSComponent>
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-
-                  <Button
-                    onClick={(event) => handleClick(event, message.id, message.text)}
-                    sx={{ alignSelf: 'flex-start' }}
+              {groupmessages.map((message) => {
+                const decryptedMessage = decryptMessage(message.text, secretKey);
+                return (
+                  <Box
+                    key={message.id}
+                    sx={{ marginBottom: 1, display: 'flex', justifyContent: 'space-between' }}
                   >
-                    ...
-                  </Button>
-                </Box>
-              ))}
+                    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                      <Typography variant="body2" fontWeight="bold" sx={{ marginRight: 1 }}>
+                        <Link to={`/profile/${message.authorid}`}>{message.authorName}</Link>
+                      </Typography>
+                      {isEditing === message.id ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                          <TextField
+                            value={editingText}
+                            onChange={(e) => setEditingText(e.target.value)}
+                            fullWidth
+                            variant="outlined"
+                            size="small"
+                            sx={{ marginRight: 1 }}
+                          />
+
+                          <IconButton color="primary" onClick={handleSave}>
+                            <CheckIcon />
+                          </IconButton>
+                        </Box>
+                      ) : (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          {message.isEdited && (
+                            <Typography
+                              variant="body2"
+                              sx={{ fontStyle: 'italic', color: 'grey', marginRight: 1 }}
+                            >
+                              ред.
+                            </Typography>
+                          )}
+                          <Typography variant="body1" sx={{ marginLeft: 2 }}>
+                            <CustomTTSComponent highlight> {decryptedMessage} </CustomTTSComponent>
+                          </Typography>
+                        </Box>
+                      )}
+                    </Box>
+
+                    <Button
+                      onClick={(event) => handleClick(event, message.id, message.text)}
+                      sx={{ alignSelf: 'flex-start' }}
+                    >
+                      ...
+                    </Button>
+                  </Box>
+                );
+              })}
             </Box>
           </Paper>
 
@@ -216,8 +208,12 @@ export default function OneGroupPage(): JSX.Element {
               if (!text || typeof text !== 'string' || !text.trim()) {
                 return console.log('Сообщение не может быть пустым');
               }
-              sendData(text, groupId);
-              setInput('');
+              try {
+                const encryptedMessage = encryptMessage(text, secretKey);
+                sendData(encryptedMessage, groupId);
+              } catch (error) {
+                console.error('Ошибка при шифровании сообщения:', error);
+              }
               return e.currentTarget.reset();
             }}
             sx={{

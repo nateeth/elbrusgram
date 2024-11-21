@@ -1,47 +1,38 @@
+const CryptoJS = require('crypto-js');
+const secretKey = 'secret-key';
+
 const { Message, User, Group, UserGroup } = require('../../db/models');
-const {
-  encryptMessage,
-  decryptMessage,
-  generateSecretKey,
-} = require('../utils/crypto-utils');
+
+function encryptMessage(message) {
+  return CryptoJS.AES.encrypt(message, secretKey).toString();
+}
+
+function decryptMessage(encryptedText) {
+  const bytes = CryptoJS.AES.decrypt(encryptedText, secretKey);
+  return bytes.toString(CryptoJS.enc.Utf8);
+}
 
 const activeConnections = {};
 
-const sendMessages = async (ws, user) => {
+const sendMessages = async (ws) => {
   try {
-    // Получаем все сообщения из базы данных, упорядоченные по дате
     const messages = await Message.findAll({
       order: [['createdAt', 'ASC']],
     });
 
-    // Генерируем секретный ключ для пользователя (или получаем из базы данных, если нужно)
-    const secretKey = await generateSecretKey(user.id); // Получаем симметричный ключ для пользователя
+    const encryptedMessages = messages.map((message) => ({
+      ...message,
+      text: encryptMessage(message.text, secretKey),
+    }));
 
-    // Расшифровываем текст сообщений
-    const decryptedMessages = await Promise.all(
-      messages.map(async (message) => {
-        const decryptedText = await decryptMessage(message.text, secretKey); // Расшифровываем сообщение
-        return {
-          ...message.toJSON(),
-          text: decryptedText,
-        };
-      }),
-    );
-
-    // Подготовка объекта действия для отправки
     const action = {
       type: 'chat/setMessages',
-      payload: decryptedMessages,
+      payload: encryptedMessages,
     };
 
-    // Проверяем состояние WebSocket перед отправкой
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(action)); // Отправляем объект как JSON
-    } else {
-      console.error('WebSocket is not open. Current readyState:', ws.readyState);
-    }
+    ws.send(JSON.stringify(action));
   } catch (error) {
-    console.error('Error fetching and sending messages:', error);
+    console.error('Error fetching messages:', error);
   }
 };
 
@@ -61,7 +52,6 @@ function connection(ws, request, user) {
     });
   };
 
-  // Слушаем закрытие соединения и удаляем активного пользователя
   ws.on('close', () => {
     delete activeConnections[user.id];
     sendActiveUsers();
@@ -69,7 +59,18 @@ function connection(ws, request, user) {
 
   sendActiveUsers();
 
-  sendMessages(ws, user);
+  Message.findAll({
+    order: [['createdAt', 'ASC']],
+  }).then((messages) => {
+    const action = {
+      type: 'chat/setMessages',
+      payload: messages.map((msg) => ({
+        ...msg.toJSON(),
+        text: encryptMessage(msg.text),
+      })),
+    };
+    ws.send(JSON.stringify(action));
+  });
 
   Group.findAll().then((groups) => {
     const action = {
@@ -82,50 +83,33 @@ function connection(ws, request, user) {
   ws.on('message', async (data) => {
     try {
       const action = JSON.parse(data);
-
-      if (action.payload?.text) {
-        // Получаем симметричный ключ для пользователя и расшифровываем текст
-        const secretKey = await generateSecretKey(user.id);
-        action.payload.text = await decryptMessage(action.payload.text, secretKey);
-      }
-
       const { type, payload } = action;
 
       switch (type) {
         case 'NEW_MESSAGE': {
+          const decryptedText = decryptMessage(payload.text);
+          console.log('Данные:', payload.text);
+          console.log('Decrypted message text:', decryptedText);
           const currentUser = await User.findByPk(user.id);
+
           if (!currentUser) {
             console.error('User not found');
             return;
           }
 
-          // Генерация симметричного ключа AES для нового сообщения
-          const secretKey = await generateSecretKey(user.id); // Симметричный ключ AES для шифрования
-
-          // Шифруем сообщение
-          const { encryptedMessage, encryptedAesKey, iv } = await encryptMessage(
-            payload.text,
-            secretKey,
-          );
-
           const newMessage = await Message.create({
-            text: encryptedMessage, // Сохраняем зашифрованное сообщение
+            text: decryptedText,
             authorid: user.id,
             authorName: currentUser.name,
             groupid: payload.groupid,
-            encryptedAesKey, // Сохраняем зашифрованный AES ключ
-            iv, // Вектор инициализации
           });
 
-          // Отправляем зашифрованное сообщение всем пользователям
           Object.values(activeConnections).forEach((userConnection) => {
             const newAction = {
               type: 'chat/addMessage',
               payload: {
                 ...newMessage.toJSON(),
-                text: encryptedMessage, // зашифрованное сообщение
-                encryptedAesKey, // зашифрованный ключ AES
-                iv, // вектор инициализации
+                text: encryptMessage(newMessage.text),
               },
             };
             userConnection.ws.send(JSON.stringify(newAction));
@@ -140,6 +124,7 @@ function connection(ws, request, user) {
             return;
           }
 
+          const decryptedText = decryptMessage(payload.text);
           const messageToEdit = await Message.findByPk(payload.messageId);
 
           if (!messageToEdit) {
@@ -152,35 +137,22 @@ function connection(ws, request, user) {
             return;
           }
 
-          // Генерация симметричного ключа AES для редактируемого сообщения
-          const secretKey = await generateSecretKey(user.id); // Симметричный ключ AES для шифрования
-
-          // Шифруем новое сообщение
-          const { encryptedMessage, encryptedAesKey, iv } = await encryptMessage(
-            payload.text,
-            secretKey,
-          );
-
-          messageToEdit.text = encryptedMessage;
+          messageToEdit.text = decryptedText;
           messageToEdit.isEdited = true;
-
           await messageToEdit.save();
 
-          // Отправляем зашифрованное сообщение всем пользователям
           Object.values(activeConnections).forEach((userConnection) => {
             const newEditAction = {
               type: 'chat/editMessage',
               payload: {
                 ...messageToEdit.toJSON(),
-                text: encryptedMessage,
-                encryptedAesKey,
-                iv,
+                text: encryptMessage(messageToEdit.text),
               },
             };
             userConnection.ws.send(JSON.stringify(newEditAction));
           });
 
-          sendMessages(ws, user);
+          sendMessages(ws);
           break;
         }
 
@@ -272,7 +244,6 @@ function connection(ws, request, user) {
           }
           break;
         }
-
         case 'getGroups': {
           try {
             const groups = await Group.findAll({
@@ -285,12 +256,11 @@ function connection(ws, request, user) {
               ],
             });
 
-            const action = {
-              type: 'chat/setGroups',
+            const groupsAction = {
+              type: 'groupsData',
               payload: groups,
             };
-
-            ws.send(JSON.stringify(action));
+            ws.send(JSON.stringify(groupsAction));
           } catch (error) {
             console.error('Error fetching groups:', error);
           }
@@ -298,10 +268,11 @@ function connection(ws, request, user) {
         }
 
         default:
+          console.warn('Unknown action type:', type);
           break;
       }
     } catch (error) {
-      console.error('Error handling message:', error);
+      console.error('Error processing message:', error);
     }
   });
 }
