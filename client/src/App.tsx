@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './components/pages/HomePage';
 import LoginPage from './components/pages/LoginPage';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { Box, CircularProgress, createTheme, ThemeProvider } from '@mui/material';
 import ChatPage from './components/pages/ChatPage';
 import PaintPage from './components/pages/PaintPage';
 import ProfilePage from './components/pages/ProfilePage';
@@ -73,7 +73,21 @@ function App(): React.JSX.Element {
     },
   ]);
 
-  if (user.status === UserStatusEnum.pending) return <h1>Loading...</h1>;
+  if (user.status === UserStatusEnum.pending) return (
+    <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+  );
+
+
 
   return (
     <ThemeProvider theme={theme}>

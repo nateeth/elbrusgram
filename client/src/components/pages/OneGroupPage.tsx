@@ -22,12 +22,11 @@ import { MessageT } from '../../schemas/messageSchema';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import { getAllGroups } from '../providers/group/groupThunk';
+import InfoIcon from '@mui/icons-material/Info';
 
 export default function OneGroupPage(): JSX.Element {
   const messages = useAppSelector((store) => store.chat.messages);
   const user = useAppSelector((state) => state.auth.user);
-
-  const groups = useAppSelector((store) => store.chat.groups);
 
   const { sendData, editMessage, deleteMessage } = useContext(ChatwsContext);
 
@@ -40,25 +39,29 @@ export default function OneGroupPage(): JSX.Element {
   const [currentMessageId, setCurrentMessageId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState<number | null>(null);
   const [editingText, setEditingText] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const [open, setOpen] = useState(true);
+
+  const currentGroup = userGroups.filter((group) => group.id === Number(groupId));
   const handleEmoji = (emoji: any): void => {
     setInput((input) => input + emoji.emoji);
   };
 
-  const [editedMessages, setEditedMessages] = useState<number[]>([]);
   const [openInfo, setOpenInfo] = useState(false);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    void dispatch(getAllGroups());
-  }, [dispatch]);
-
+    if (!currentGroup[0]?.title) {
+      setIsLoading(true);
+      void dispatch(getAllGroups()).then(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
+    }
+  }, [dispatch, currentGroup]);
   const handleOpenInfo = async () => {
-
     await dispatch(getAllGroups());
-    
 
     setOpenInfo(true);
   };
@@ -102,8 +105,21 @@ export default function OneGroupPage(): JSX.Element {
     }
   };
 
-  const currentGroup = userGroups.filter((group) => group.id === Number(groupId));
-  console.log(currentGroup);
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>
@@ -111,9 +127,23 @@ export default function OneGroupPage(): JSX.Element {
 
       <Box sx={{ display: 'flex', height: '90vh', width: '100%', backgroundColor: '#E3F2FD' }}>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <IconButton edge="end" aria-label="more" onClick={handleOpenInfo}>
-            <MoreVertIcon />
-          </IconButton>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingTop: 2,
+              paddingLeft: 3,
+              paddingRight: 3,
+            }}
+          >
+            <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>
+              {currentGroup[0]?.title}
+            </Typography>
+            <IconButton edge="end" aria-label="more" onClick={handleOpenInfo}>
+              <InfoIcon />
+            </IconButton>
+          </Box>
           <Modal open={openInfo} onClose={handleCloseInfo}>
             <Box
               sx={{
@@ -133,13 +163,15 @@ export default function OneGroupPage(): JSX.Element {
                 Описание: {currentGroup[0]?.description.toString()}
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                Описание: {currentGroup[0]?.Owner.nick.toString()}
+                Владелец: {currentGroup[0]?.Owner.nick.toString()}
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 Пользователи:
                 {currentGroup[0]?.GroupUser.length > 1
                   ? currentGroup[0]?.GroupUser.map((user) => ` ${user.nick} `)
-                  : currentGroup[0]?.GroupUser.nick}
+                  : currentGroup[0]?.GroupUser.length === 1
+                    ? ` ${currentGroup[0]?.GroupUser[0].nick} `
+                    : 'No users'}
               </Typography>
             </Box>
           </Modal>
@@ -149,6 +181,7 @@ export default function OneGroupPage(): JSX.Element {
               margin: 2,
               padding: 2,
               overflowY: 'auto',
+              maxWidth: '1200px',
               display: 'flex',
               flexDirection: 'column',
               backgroundColor: '#fff',
