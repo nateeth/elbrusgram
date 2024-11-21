@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -7,25 +7,57 @@ import {
   Paper,
   Menu,
   MenuItem,
-  IconButton,
+  Modal,
+  CircularProgress,
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import { Link, useParams } from 'react-router-dom';
-import { useAppSelector } from '../providers/hooks';
+import { useAppDispatch, useAppSelector } from '../providers/hooks';
 import ChatwsContext from '../providers/chatws/chatwsContext';
 import ChatBar from '../ui/ChatBar';
+import { MessageT } from '../../schemas/messageSchema';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import IconButton from '@mui/material/IconButton';
+import { getAllGroups } from '../providers/group/groupThunk';
 
 export default function OneGroupPage(): JSX.Element {
   const messages = useAppSelector((store) => store.chat.messages);
   const user = useAppSelector((state) => state.auth.user);
-  const { sendData, editMessage, deleteMessage } = useContext(ChatwsContext);
-  const { groupId } = useParams();
-  const groupmessages = messages.filter((message) => message.groupid === Number(groupId));
 
+  const groups = useAppSelector((store) => store.chat.groups);
+
+  const { sendData, editMessage, deleteMessage } = useContext(ChatwsContext);
+
+  const { groupId } = useParams();
+
+
+  const groupmessages = messages.filter((message) => message.groupid === Number(groupId));
+  const userGroups = useAppSelector((store) => store.groups.groups);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentMessageId, setCurrentMessageId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState<number | null>(null);
   const [editingText, setEditingText] = useState<string>('');
+
+  const [editedMessages, setEditedMessages] = useState<number[]>([]);
+  const [openInfo, setOpenInfo] = useState(false);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    void dispatch(getAllGroups());
+  }, [dispatch]);
+
+  const handleOpenInfo = async () => {
+
+    await dispatch(getAllGroups());
+    
+
+    setOpenInfo(true);
+  };
+  const handleCloseInfo = () => {
+    setOpenInfo(false);
+  };
+
 
   const handleClick = (event: React.MouseEvent<HTMLElement>, messageId: number, text: string) => {
     setAnchorEl(event.currentTarget);
@@ -63,12 +95,47 @@ export default function OneGroupPage(): JSX.Element {
     }
   };
 
+  const currentGroup = userGroups.filter((group) => group.id === Number(groupId));
+  console.log(currentGroup);
+
   return (
     <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#E3F2FD' }}>
       <ChatBar />
 
       <Box sx={{ display: 'flex', height: '90vh', width: '100%', backgroundColor: '#E3F2FD' }}>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <IconButton edge="end" aria-label="more" onClick={handleOpenInfo}>
+            <MoreVertIcon />
+          </IconButton>
+          <Modal open={openInfo} onClose={handleCloseInfo}>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 400,
+                bgcolor: 'background.paper',
+                p: 4,
+              }}
+            >
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Информация о чате
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                Описание: {currentGroup[0]?.description.toString()}
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                Описание: {currentGroup[0]?.Owner.nick.toString()}
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                Пользователи:
+                {currentGroup[0]?.GroupUser.length > 1
+                  ? currentGroup[0]?.GroupUser.map((user) => ` ${user.nick} `)
+                  : currentGroup[0]?.GroupUser.nick}
+              </Typography>
+            </Box>
+          </Modal>
           <Paper
             sx={{
               flex: 1,
@@ -168,7 +235,8 @@ export default function OneGroupPage(): JSX.Element {
       </Box>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        {user?.id === messages.find((message) => message.id === currentMessageId)?.authorid && (
+        {user?.id ===
+          messages.find((message: MessageT) => message.id === currentMessageId)?.authorid && (
           <>
             <MenuItem onClick={handleDelete} sx={{ color: 'red', fontSize: '0.875rem' }}>
               Удалить
