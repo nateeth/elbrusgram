@@ -198,7 +198,13 @@ export default function OneGroupPage(): JSX.Element {
               {groupmessages.map((message) => (
                 <Box
                   key={message.id}
-                  sx={{ marginBottom: 1, display: 'flex', justifyContent: 'space-between' }}
+                  sx={{
+                    marginBottom: 1,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    maxWidth: '600px',
+                    wordWrap: 'break-word',
+                  }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
                     <Typography variant="body2" fontWeight="bold" sx={{ marginRight: 1 }}>
@@ -229,8 +235,8 @@ export default function OneGroupPage(): JSX.Element {
                             ред.
                           </Typography>
                         )}
-                        <Typography variant="body1" sx={{ marginLeft: 2 }}>
-                          <CustomTTSComponent highlight> {message.text} </CustomTTSComponent>
+                        <Typography variant="body1" sx={{ marginLeft: 2, wordWrap: 'break-word', maxWidth: '600px' }}>
+                          <CustomTTSComponent highlight > {message.text} </CustomTTSComponent>
                         </Typography>
                       </Box>
                     )}
