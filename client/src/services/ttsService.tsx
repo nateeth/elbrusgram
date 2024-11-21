@@ -1,30 +1,24 @@
-import {Button} from '@mui/material'
-import { useTts } from 'tts-react'
+
+import { useEffect } from 'react';
 import type { TTSHookProps } from 'tts-react'
 
 interface CustomProps extends TTSHookProps {
   highlight?: boolean
 }
 
-export const CustomTTSComponent = ({ children, highlight = false }: CustomProps) => {
-  const { ttsChildren, state, play, stop, pause } = useTts({
-    lang: 'ru-RU',
-    children,
-    markTextAsSpoken: highlight,
-  });
+export const CustomTTSComponent = ({ text, highlight }: { text: string; highlight: boolean }) => {
+  useEffect(() => {
+    if (text) {
+      const synth = window.speechSynthesis;
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      if (highlight) {
+        
+      }
 
-  return (
-    <div>
-      <>
-        <Button disabled={state.isPlaying} onClick={play}>
-          ▶
-        </Button>
-        <Button disabled={!state.isPlaying} onClick={pause}>
-          ⏸
-        </Button>
-        <Button onClick={stop}>⏹</Button>
-      </>
-      {ttsChildren}
-    </div>
-  );
-}
+      synth.speak(utterance);
+    }
+  }, [text, highlight]);
+
+  return null
+} 
