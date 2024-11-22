@@ -18,12 +18,10 @@ const ProfilePage = () => {
   const params = useParams();
   const [uploaded, setUploaded] = useState(null as string | null);
 
-  //input gathering
   const user = useAppSelector((state) => state.auth.user);
   const users = useAppSelector((state) => state.users)
   const userpage = users.users.find((elem)=> elem.id === Number(params.id));
 
-  //emoji handling
   const [open, setOpen] = useState(true);
   const [input, setInput] = useState('');
   const handleEmoji = (emoji: any): void => {
@@ -108,7 +106,6 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
           backgroundColor: 'white',
           padding: 2,
           borderRight: '1px solid #ddd',
-          //   overflowY: 'auto',
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -119,7 +116,6 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
             backgroundColor: 'white',
             padding: 2,
             borderRight: '1px solid #ddd',
-            //   overflowY: 'auto',
             display: 'flex',
             flexDirection: 'row',
           }}
@@ -131,10 +127,8 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
               height: 200,
               maxHeight: { xs: 233, md: 167 },
               maxWidth: { xs: 350, md: 250 },
-              // backgroundColor: 'gray',
               padding: 2,
               borderRight: '1px solid #ddd',
-              //   overflowY: 'auto',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -148,7 +142,6 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
               backgroundColor: 'white',
               padding: 2,
               borderRight: '1px solid #ddd',
-              //   overflowY: 'auto',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -171,10 +164,8 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
           sx={{
             width: 450,
             height: 50,
-            // backgroundColor: 'gray',
             padding: 2,
             borderRight: '1px solid #ddd',
-            //   overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -200,7 +191,6 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
             backgroundColor: 'white',
             padding: 2,
             borderRight: '1px solid #ddd',
-            //   overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -242,7 +232,6 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
                 setInput('');
                 return e.currentTarget.reset();
               }}
-              //   key={message.id}
               sx={{
                 padding: 2,
                 display: 'flex',
@@ -318,7 +307,6 @@ const editImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
                         maxHeight: { xs: 400, md: 300 },
                         maxWidth: { xs: 600, md: 600 },
                         padding: 2,
-                        //   overflowY: 'auto',
                         display: 'flex',
                         flexDirection: 'column',
                       }}

@@ -1,7 +1,12 @@
 import Tool from './Tool';
 
 export default class Circle extends Tool {
-  constructor(canvas) {
+  private mouseDown: boolean = false;
+  private startX: number = 0;
+  private startY: number = 0;
+  private saved: string = '';
+
+  constructor(canvas: HTMLCanvasElement) {
     super(canvas);
     this.listen();
   }
@@ -12,40 +17,40 @@ export default class Circle extends Tool {
     this.canvas.onmouseup = this.mouseUpHandler.bind(this);
   }
 
-  mouseDownHandler(e) {
+  private mouseDownHandler(e: MouseEvent) {
     this.mouseDown = true;
-    let canvasData = this.canvas.toDataURL();
+    const canvasData = this.canvas.toDataURL();
     this.ctx.beginPath();
-    this.startX = e.pageX - e.target.offsetLeft;
-    this.startY = e.pageY - e.target.offsetTop;
+    this.startX = e.pageX - (e.target as HTMLCanvasElement).offsetLeft;
+    this.startY = e.pageY - (e.target as HTMLCanvasElement).offsetTop;
     this.saved = canvasData;
   }
 
-  mouseUpHandler(e) {
+  private mouseUpHandler(e: MouseEvent) {
     this.mouseDown = false;
   }
 
-  mouseMoveHandler(e) {
+  private mouseMoveHandler(e: MouseEvent) {
     if (this.mouseDown) {
-      let curentX = e.pageX - e.target.offsetLeft;
-      let curentY = e.pageY - e.target.offsetTop;
-      let width = curentX - this.startX;
-      let height = curentY - this.startY;
-      let r = Math.sqrt(width ** 2 + height ** 2);
+      const curentX = e.pageX - (e.target as HTMLCanvasElement).offsetLeft;
+      const curentY = e.pageY - (e.target as HTMLCanvasElement).offsetTop;
+      const width = curentX - this.startX;
+      const height = curentY - this.startY;
+      const r = Math.sqrt(width ** 2 + height ** 2);
       this.draw(this.startX, this.startY, r);
     }
   }
 
-  draw(x, y, r) {
+  private draw(x: number, y: number, r: number) {
     const img = new Image();
     img.src = this.saved;
-    img.onload = async function () {
+    img.onload = () => {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
       this.ctx.beginPath();
       this.ctx.arc(x, y, r, 0, 2 * Math.PI);
       this.ctx.fill();
       this.ctx.stroke();
-    }.bind(this);
+    };
   }
 }

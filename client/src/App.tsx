@@ -87,8 +87,6 @@ function App(): React.JSX.Element {
       </Box>
   );
 
-
-
   return (
     <ThemeProvider theme={theme}>
       <RouterProvider router={router} />

@@ -1,7 +1,13 @@
 import Tool from './Tool';
 
 export default class Line extends Tool {
-  constructor(canvas) {
+  private mouseDown: boolean = false;
+  private currentX: number = 0;
+  private currentY: number = 0;
+  private saved: string = '';
+  public name: string;
+
+  constructor(canvas: HTMLCanvasElement) {
     super(canvas);
     this.listen();
     this.name = 'Line';
@@ -13,35 +19,37 @@ export default class Line extends Tool {
     this.canvas.onmousemove = this.mouseMoveHandler.bind(this);
   }
 
-  mouseDownHandler(e) {
+  private mouseDownHandler(e: MouseEvent) {
     this.mouseDown = true;
-    this.currentX = e.pageX - e.target.offsetLeft;
-    this.currentY = e.pageY - e.target.offsetTop;
+    const target = e.target as HTMLCanvasElement;
+    this.currentX = e.pageX - target.offsetLeft;
+    this.currentY = e.pageY - target.offsetTop;
     this.ctx.beginPath();
     this.ctx.moveTo(this.currentX, this.currentY);
     this.saved = this.canvas.toDataURL();
   }
 
-  mouseUpHandler(e) {
+  private mouseUpHandler(e: MouseEvent) {
     this.mouseDown = false;
   }
 
-  mouseMoveHandler(e) {
+  private mouseMoveHandler(e: MouseEvent) {
     if (this.mouseDown) {
-      this.draw(e.pageX - e.target.offsetLeft, e.pageY - e.target.offsetTop);
+      const target = e.target as HTMLCanvasElement;
+      this.draw(e.pageX - target.offsetLeft, e.pageY - target.offsetTop);
     }
   }
 
-  draw(x, y) {
+  private draw(x: number, y: number) {
     const img = new Image();
     img.src = this.saved;
-    img.onload = async function () {
+    img.onload = () => {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
       this.ctx.beginPath();
       this.ctx.moveTo(this.currentX, this.currentY);
       this.ctx.lineTo(x, y);
       this.ctx.stroke();
-    }.bind(this);
+    };
   }
 }

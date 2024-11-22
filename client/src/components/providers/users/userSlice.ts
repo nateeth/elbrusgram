@@ -7,12 +7,10 @@ export type UserSliceType = {
     error: string | null
 }
 
-
 const initialState: UserSliceType = {
     users: [],
     error: null
 }
-
 
 export const userSlice = createSlice({
     name: 'users',

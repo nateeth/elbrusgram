@@ -1,7 +1,9 @@
-import Tool from "./Tool";
+import Tool from './Tool';
 
 export default class Brush extends Tool {
-  constructor(canvas) {
+  protected mouseDown: boolean = false;
+
+  constructor(canvas: HTMLCanvasElement) {
     super(canvas);
     this.listen();
   }
@@ -12,23 +14,25 @@ export default class Brush extends Tool {
     this.canvas.onmouseup = this.mouseUpHandler.bind(this);
   }
 
-  mouseUpHandler(e) {
+  private mouseUpHandler(e: MouseEvent) {
     this.mouseDown = false;
   }
 
-  mouseDownHandler(e) {
+  private mouseDownHandler(e: MouseEvent) {
     this.mouseDown = true;
+    const canvas = e.target as HTMLCanvasElement;
     this.ctx.beginPath();
-    this.ctx.moveTo(e.pageX - e.target.offsetLeft, e.pageY - e.target.offsetTop);
+    this.ctx.moveTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
   }
 
-  mouseMoveHandler(e) {
+  private mouseMoveHandler(e: MouseEvent) {
     if (this.mouseDown) {
-      this.draw(e.pageX - e.target.offsetLeft, e.pageY - e.target.offsetTop);
-    } 
+      const canvas = e.target as HTMLCanvasElement;
+      this.draw(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+    }
   }
 
-  draw(x, y) {
+  draw(x: number, y: number) {
     this.ctx.lineTo(x, y);
     this.ctx.stroke();
   }

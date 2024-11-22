@@ -13,7 +13,6 @@ const store = configureStore({
     post: postReducer,
     users: userReducer,
     groups: groupReducer
-
   },
 });
 
