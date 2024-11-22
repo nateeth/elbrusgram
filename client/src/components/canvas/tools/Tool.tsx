@@ -1,11 +1,13 @@
 export default class Tool {
   protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
+  public name: string; 
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d')!;
     this.destroyEvents();
+    this.name = '';
   }
 
   set fillColor(color: string) {

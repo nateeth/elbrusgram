@@ -5,6 +5,7 @@ export default class Line extends Tool {
   private currentX: number = 0;
   private currentY: number = 0;
   private saved: string = '';
+  public name: string;
 
   constructor(canvas: HTMLCanvasElement) {
     super(canvas);
