@@ -29,7 +29,7 @@ export default class Line extends Tool {
     this.saved = this.canvas.toDataURL();
   }
 
-  private mouseUpHandler(e: MouseEvent) {
+  private mouseUpHandler() {
     this.mouseDown = false;
   }
 
