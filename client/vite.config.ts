@@ -7,7 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:3000',
+      '/socket': 'http://localhost:3000',
+      '/images': 'http://localhost:3000',
+    },
   },
-}
 });
 

@@ -1,16 +1,17 @@
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { Provider } from 'react-redux';
-import store from './store';
+import store from './components/providers/store';
+import ChatwsProvider from './components/providers/chatws/ChatwsProvider';
+import { injectStore } from './services/axiosInstance';
 
-const container = document.getElementById('root');
-
-if (container)
-{createRoot(container).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <Provider store={store}>
-    <App />
+    <ChatwsProvider>
+      <App />
+    </ChatwsProvider>
   </Provider>,
 );
-} else {console.error('Root element not found')}
 
+injectStore(store);
