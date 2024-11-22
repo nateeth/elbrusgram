@@ -15,7 +15,6 @@ import { Link, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../providers/hooks';
 import ChatwsContext from '../providers/chatws/chatwsContext';
 import ChatBar from '../ui/ChatBar';
-import { CustomTTSComponent } from '../../services/ttsService';
 import EmojiPicker from 'emoji-picker-react';
 import { MessageT } from '../../schemas/messageSchema';
 import IconButton from '@mui/material/IconButton';
@@ -112,15 +111,9 @@ export default function OneGroupPage(): JSX.Element {
     }
   };
 
-  const handlePlayTTS = () => {
-    if (currentMessageId !== null) {
-      const message = messages.find((msg) => msg.id === currentMessageId);
-      if (message && message.text) {
-        const utterance = new SpeechSynthesisUtterance(message.text);
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-    handleClose();
+  const handlePlayTTS = (messageText: string) => {
+    const utterance = new SpeechSynthesisUtterance(messageText);
+    window.speechSynthesis.speak(utterance);
   };
 
   if (isLoading) {
@@ -238,30 +231,24 @@ export default function OneGroupPage(): JSX.Element {
                       </Box>
                     ) : (
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        {message.isEdited && (
-                          <Typography
-                            variant="body2"
-                            sx={{ fontStyle: 'italic', color: 'grey', marginRight: 1 }}
-                          >
-                            ред.
-                          </Typography>
-                        )}
                         <Typography
                           variant="body1"
                           sx={{
                             marginLeft: 2,
                             wordWrap: 'break-word',
-                            maxWidth: '600px',
+                            maxWidth: '500px',
                           }}
                         >
                           {message.text}
                         </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{ marginLeft: 2, wordWrap: 'break-word', maxWidth: '600px' }}
-                        >
-                          <CustomTTSComponent highlight> {message.text} </CustomTTSComponent>
-                        </Typography>
+                        {message.isEdited && (
+                          <Typography
+                            variant="body2"
+                            sx={{ fontStyle: 'italic', color: 'grey', marginLeft: 1 }}
+                          >
+                            ред.
+                          </Typography>
+                        )}
                       </Box>
                     )}
                   </Box>
@@ -346,7 +333,19 @@ export default function OneGroupPage(): JSX.Element {
             </MenuItem>
           </>
         )}
-        <MenuItem onClick={handlePlayTTS} sx={{ fontSize: '0.875rem' }}>
+        <MenuItem
+          onClick={() => {
+            const messageText = messages.find(
+              (message: MessageT) => message.id === currentMessageId,
+            )?.text;
+            if (messageText) {
+              handlePlayTTS(messageText);
+            } else {
+              console.warn('Сообщение не найдено или текст отсутствует.');
+            }
+          }}
+          sx={{ fontSize: '0.875rem' }}
+        >
           Озвучить
         </MenuItem>
         <MenuItem onClick={handleForward} sx={{ fontSize: '0.875rem' }}>
